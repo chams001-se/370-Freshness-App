@@ -1,3 +1,8 @@
+/*
+Uses the PanelDate and
+
+ */
+
 import javax.swing.*;
 import java.awt.*;
 import java.time.YearMonth;
@@ -18,43 +23,49 @@ public class CalendarApp {
 
     // UI setup
     private void createAndShowUI() {
-        frame = new JFrame("Calendar");                 // create main window
+        // INITIALIZES THE WINDOW
+        frame = new JFrame("ShelfLife");                 // create main window
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // close app on exit
-        frame.setSize(500, 400);                        // initial window size
+        frame.setSize(500, 1100);                        // initial window size
         frame.setLayout(new BorderLayout());            // BorderLayout for top, bottom, and center
 
-        // month label + buttons
+        // ADDS THE MONTH LABEL & BUTTONS TO UI
         JPanel topPanel = new JPanel(new BorderLayout());   // Use BorderLayout for buttons + label
-        monthLabel = new JLabel("", SwingConstants.CENTER); // centered month label
+
+        // centered month label
+        // Text parameter is assigned with updateMonthLabel()
+        monthLabel = new JLabel("", SwingConstants.CENTER);
         monthLabel.setFont(monthLabel.getFont().deriveFont(Font.BOLD, 18f)); // bold, larger font
 
         JButton prevButton = new JButton("<<");             // button to go to previous month
         JButton nextButton = new JButton(">>");             // button to go to next month
 
-        // add buttons and label to top panel
+        // Add buttons and label to top panel
         topPanel.add(prevButton, BorderLayout.WEST);        // place prev button on left
         topPanel.add(monthLabel, BorderLayout.CENTER);      // place month label in center
         topPanel.add(nextButton, BorderLayout.EAST);        // place next button on right
 
         frame.add(topPanel, BorderLayout.NORTH);            // add top panel to top of window
 
-        // calendar panel
-        JPanel calendarContainer = new JPanel(new BorderLayout()); // container for calendar grid
+        // Calendar panel
+        JPanel calendarPanel = new JPanel(new BorderLayout()); // container for calendar grid
         calendar = new PanelDate(currentMonth);                    // create calendar for current month
-        calendarContainer.add(calendar, BorderLayout.CENTER);      // add calendar to container
-        frame.add(calendarContainer, BorderLayout.CENTER);         // add container to main frame
+        calendarPanel.add(calendar, BorderLayout.CENTER);      // add calendar to container
+
+        frame.add(calendarPanel, BorderLayout.CENTER);         // add container to main frame
 
         // initialize month
         updateMonthLabel();                        // set initial text to current month
 
-        // what the buttons do
-        prevButton.addActionListener(new java.awt.event.ActionListener() { // previous month
+        // Left button, goes to month before
+        prevButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 goToPreviousMonth();               // call method to handle previous month
             }
         });
 
-        nextButton.addActionListener(new java.awt.event.ActionListener() { // next month
+        // Right button, goes to month after
+        nextButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 goToNextMonth();                   // call method to handle next month
             }
@@ -87,10 +98,16 @@ public class CalendarApp {
 
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
+        CalendarApp ShelfLife = new CalendarApp();
+
+        /*
+        This seems scary.
+                SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 new CalendarApp();                 // create an instance (builds and shows UI)
             }
         });
+         */
+
     }
 }

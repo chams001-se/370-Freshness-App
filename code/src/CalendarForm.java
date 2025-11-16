@@ -1,11 +1,18 @@
+/*
+Displays the monthly calendar with navigation buttons to move between months.
+Uses PanelDate to render the calendar grid.
+ */
+
 import javax.swing.*;
 import java.time.YearMonth;
 import java.time.format.TextStyle;    // for full month name display
 import java.util.Locale;              // locale for month formatting
 
 public class CalendarForm {
-    private JPanel mainPanel;           // root panel for the form
+    private JPanel calendarScreen;           // root panel for the form
     private JPanel topPanel;            // panel for navigation buttons and month label
+
+    private JPanel FoodExpiration;
     private JPanel calendarPanel;       // placeholder for the calendar grid
     private JButton nextButton;         // button to go to next month
     private JButton prevButton;         // button to go to previous month
@@ -47,11 +54,13 @@ public class CalendarForm {
         monthLabel.setText(monthName + " " + currentMonth.getYear()); // month + year
     }
 
+    // This main function will only create the calendar, can be used for testing purposes
     public static void main(String[] args) {
         JFrame frame = new JFrame("Calendar");               // window title
-        frame.setContentPane(new CalendarForm().mainPanel); // use the form’s main panel
+        frame.setLocationRelativeTo(null);
+        frame.setContentPane(new CalendarForm().calendarScreen); // use the form’s main panel
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // close app on exit
-        frame.pack();                                        // auto-size to fit components
+        frame.pack();                                        // auto-size to fit component
         frame.setVisible(true);                              // show window
     }
 }
