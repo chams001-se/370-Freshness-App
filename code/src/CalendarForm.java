@@ -14,10 +14,14 @@ public class CalendarForm {
 
     private JPanel FoodExpiration;
     private JPanel calendarPanel;       // placeholder for the calendar grid
-    private JButton nextButton;         // button to go to next month
-    private JButton prevButton;         // button to go to previous month
-    private JPanel labelPanel;          // nested panel to center month label
+    private JButton nextMonthButton;         // button to go to next month
+    private JButton prevMonthButton;         // button to go to previous month
+    private JPanel monthPanel;          // nested panel to center month label
     private JLabel monthLabel;          // label displaying the current month/year
+    private JButton prevYearButton;
+    private JButton nextYearButton;
+    private JPanel yearPanel;
+    private JPanel bottomPanel;
 
     private PanelDate customCalendar;   // the actual calendar panel
     private YearMonth currentMonth;     // tracks currently displayed month
@@ -34,14 +38,14 @@ public class CalendarForm {
         updateMonthLabel(); // display current month
 
         // action for previous month button
-        prevButton.addActionListener(e -> {
+        prevMonthButton.addActionListener(e -> {
             currentMonth = currentMonth.minusMonths(1); // move back one month
             customCalendar.setMonth(currentMonth);     // update calendar
             updateMonthLabel();                         // update label
         });
 
         // action for next month button
-        nextButton.addActionListener(e -> {
+        nextMonthButton.addActionListener(e -> {
             currentMonth = currentMonth.plusMonths(1); // move forward one month
             customCalendar.setMonth(currentMonth);     // update calendar
             updateMonthLabel();                         // update label

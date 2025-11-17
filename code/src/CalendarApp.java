@@ -47,6 +47,9 @@ public class CalendarApp {
 
         frame.add(topPanel, BorderLayout.NORTH);            // add top panel to top of window
 
+
+        frame.add(topPanel, BorderLayout.NORTH);            // add top panel to top of window
+
         // Calendar panel
         JPanel calendarPanel = new JPanel(new BorderLayout()); // container for calendar grid
         calendar = new PanelDate(currentMonth);                    // create calendar for current month
