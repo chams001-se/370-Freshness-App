@@ -12,105 +12,177 @@ import java.util.Locale;
 public class CalendarApp {
 
     private JFrame frame;              // main application window
+
+    private JPanel calendarScreen = new JPanel(new BorderLayout());
     private JLabel monthLabel;         // label showing current month/year
+
+    private JLabel yearLabel;         // label showing current month/year
     private PanelDate calendar;        // calendar panel (grid of days)
-    private YearMonth currentMonth;    // tracks the currently displayed month
+    private YearMonth currentDate;    // tracks the currently displayed month
 
     public CalendarApp() {
-        currentMonth = YearMonth.now(); // start with current month
+        currentDate = YearMonth.now(); // start with current month
         createAndShowUI();             // build and display the GUI
     }
 
-    // UI setup
-    private void createAndShowUI() {
-        // INITIALIZES THE WINDOW
-        frame = new JFrame("ShelfLife");                 // create main window
+    // JFrame is used to hold all various components inside a JPanel
+    // Creates the window
+    private void createFrame(){
+        frame = new JFrame("ShelfLife");                 // create & titles main window
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // close app on exit
         frame.setSize(500, 1100);                        // initial window size
         frame.setLayout(new BorderLayout());            // BorderLayout for top, bottom, and center
+        frame.setVisible(true);                     // show the window
+        frame.add(calendarScreen, BorderLayout.NORTH);
 
-        // ADDS THE MONTH LABEL & BUTTONS TO UI
+    }
+
+
+    // Adds the month label, and the buttons to be pressed onto the UI
+    private void createYearPanel(){
+        /*
+        BorderLayout arranges topPanel into several regions, those being NORTH SOUTH EAST WEST CENTER.
+        It is important to point out that only one component can be at one region.b
+         */
         JPanel topPanel = new JPanel(new BorderLayout());   // Use BorderLayout for buttons + label
 
         // centered month label
         // Text parameter is assigned with updateMonthLabel()
-        monthLabel = new JLabel("", SwingConstants.CENTER);
-        monthLabel.setFont(monthLabel.getFont().deriveFont(Font.BOLD, 18f)); // bold, larger font
+        yearLabel = new JLabel("YEAR", SwingConstants.CENTER);
+        yearLabel.setFont(yearLabel.getFont().deriveFont(Font.BOLD, 18f)); // bold, larger font
 
-        JButton prevButton = new JButton("<<");             // button to go to previous month
-        JButton nextButton = new JButton(">>");             // button to go to next month
+        // Creates interactable buttons
+        JButton prevYearButton = new JButton("<<");             // button to go to previous month
+        JButton nextYearButton = new JButton(">>");             // button to go to next month
 
         // Add buttons and label to top panel
-        topPanel.add(prevButton, BorderLayout.WEST);        // place prev button on left
-        topPanel.add(monthLabel, BorderLayout.CENTER);      // place month label in center
-        topPanel.add(nextButton, BorderLayout.EAST);        // place next button on right
+        topPanel.add(prevYearButton, BorderLayout.WEST);        // place prev button on left
+        topPanel.add(yearLabel, BorderLayout.CENTER);      // place month label in center
+        topPanel.add(nextYearButton, BorderLayout.EAST);        // place next button on right
 
-        frame.add(topPanel, BorderLayout.NORTH);            // add top panel to top of window
-
-
-        frame.add(topPanel, BorderLayout.NORTH);            // add top panel to top of window
-
-        // Calendar panel
-        JPanel calendarPanel = new JPanel(new BorderLayout()); // container for calendar grid
-        calendar = new PanelDate(currentMonth);                    // create calendar for current month
-        calendarPanel.add(calendar, BorderLayout.CENTER);      // add calendar to container
-
-        frame.add(calendarPanel, BorderLayout.CENTER);         // add container to main frame
-
-        // initialize month
-        updateMonthLabel();                        // set initial text to current month
+        calendarScreen.add(topPanel, BorderLayout.NORTH);            // add top panel to top of window
 
         // Left button, goes to month before
-        prevButton.addActionListener(new java.awt.event.ActionListener() {
+        prevYearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                goToPreviousYear();               // call method to handle previous month
+            }
+        });
+
+        // Right button, goes to month after
+        nextYearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                goToNextYear();                   // call method to handle next month
+            }
+        });
+    }
+
+    private void createMonthPanel(){
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+
+        // centered month label
+        // Text parameter is assigned with updateMonthLabel()
+        monthLabel = new JLabel("MONTH", SwingConstants.CENTER);
+        monthLabel.setFont(monthLabel.getFont().deriveFont(Font.BOLD, 18f)); // bold, larger font
+
+        // Creates interactable buttons
+        JButton prevMonthButton = new JButton("<<");             // button to go to previous month
+        JButton nextMonthButton = new JButton(">>");             // button to go to next month
+
+
+        // Add buttons and label to top panel
+        bottomPanel.add(prevMonthButton, BorderLayout.WEST);        // place prev button on left
+        bottomPanel.add(monthLabel, BorderLayout.CENTER);      // place month label in center
+        bottomPanel.add(nextMonthButton, BorderLayout.EAST);        // place next button on right
+
+        calendarScreen.add(bottomPanel, BorderLayout.SOUTH);            // add top panel to top of window
+
+        // Left button, goes to month before
+        prevMonthButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 goToPreviousMonth();               // call method to handle previous month
             }
         });
 
         // Right button, goes to month after
-        nextButton.addActionListener(new java.awt.event.ActionListener() {
+        nextMonthButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 goToNextMonth();                   // call method to handle next month
             }
         });
+    }
 
-        frame.setVisible(true);                     // show the window
+    private void createCalendar(){
+        JPanel calendarPanel = new JPanel(new BorderLayout()); // container for calendar grid
+        calendar = new PanelDate(currentDate);                    // create calendar for current month
+        calendarPanel.add(calendar, BorderLayout.CENTER);      // add calendar to container
+
+        calendarPanel.setPreferredSize(new Dimension(frame.getWidth(), 350)); // Makes it so the calendar is always 350 pixels tall, preventing inconsistent UI
+        calendarScreen.add(calendarPanel, BorderLayout.CENTER);         // add container to main frame
+
+        // Based on current date, update the month
+        updateMonthLabel();                        // set initial text to current month
+        updateYearLabel();
+
+    }
+
+    private void createExpirationPanel(){
+        JPanel expirationPanel = new JPanel(new BorderLayout());
+
+        JButton the = new JButton("the");
+
+        expirationPanel.add(the, BorderLayout.NORTH);
+    }
+    // UI setup
+    private void createAndShowUI() {
+        createFrame();
+        createYearPanel();
+        createMonthPanel();
+        createCalendar();
+        createExpirationPanel();
     }
 
     // go to previous month
     private void goToPreviousMonth() {
-        currentMonth = currentMonth.minusMonths(1); // decrement month
-        calendar.setMonth(currentMonth);            // update calendar grid
+        currentDate = currentDate.minusMonths(1); // decrement month
+        calendar.setMonth(currentDate);            // update calendar grid
         updateMonthLabel();                         // update label text
     }
 
     // go to next month
     private void goToNextMonth() {
-        currentMonth = currentMonth.plusMonths(1);  // increment month
-        calendar.setMonth(currentMonth);            // update calendar grid
+        currentDate = currentDate.plusMonths(1);  // increment month
+        calendar.setMonth(currentDate);            // update calendar grid
         updateMonthLabel();                         // update label text
     }
 
     // change month label
     private void updateMonthLabel() {
         // get full month name in default locale
-        String monthName = currentMonth.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+        String monthName = currentDate.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
         // month label format
-        monthLabel.setText(monthName + " " + currentMonth.getYear());
+        monthLabel.setText(monthName);
     }
 
+    // go to previous month
+    private void goToPreviousYear() {
+        currentDate = currentDate.minusYears(1); // decrement month
+        calendar.setMonth(currentDate);            // update calendar grid
+        updateYearLabel();                         // update label text
+    }
 
-    public static void main(String[] args) {
-        CalendarApp ShelfLife = new CalendarApp();
+    // go to next month
+    private void goToNextYear() {
+        currentDate = currentDate.plusYears(1);  // increment month
+        calendar.setMonth(currentDate);            // update calendar grid
+        updateYearLabel();                         // update label text
+    }
 
-        /*
-        This seems scary.
-                SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new CalendarApp();                 // create an instance (builds and shows UI)
-            }
-        });
-         */
+    // change month label
+    private void updateYearLabel() {
+        // get full month name in default locale
 
+        // month label format
+        yearLabel.setText(String.valueOf(currentDate.getYear()));
     }
 }
