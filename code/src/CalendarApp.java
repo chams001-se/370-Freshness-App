@@ -13,7 +13,7 @@ public class CalendarApp {
 
     private JFrame frame;              // main application window
 
-    private JPanel calendarScreen = new JPanel(new BorderLayout());
+    private JPanel calendarScreen;
     private JLabel monthLabel;         // label showing current month/year
 
     private JLabel yearLabel;         // label showing current month/year
@@ -33,6 +33,7 @@ public class CalendarApp {
         frame.setSize(500, 1100);                        // initial window size
         frame.setLayout(new BorderLayout());            // BorderLayout for top, bottom, and center
         frame.setVisible(true);                     // show the window
+        calendarScreen = new JPanel(new BorderLayout());
         frame.add(calendarScreen, BorderLayout.NORTH);
 
     }
@@ -79,22 +80,34 @@ public class CalendarApp {
 
     private void createMonthPanel(){
         JPanel bottomPanel = new JPanel(new BorderLayout());
+        JPanel monthPanel = new JPanel();
+        JPanel FoodEntryPanel = new JPanel(new GridLayout(1,2));
+
+        monthPanel.setLayout(new BoxLayout(monthPanel, BoxLayout.LINE_AXIS));
 
         // centered month label
         // Text parameter is assigned with updateMonthLabel()
         monthLabel = new JLabel("MONTH", SwingConstants.CENTER);
         monthLabel.setFont(monthLabel.getFont().deriveFont(Font.BOLD, 18f)); // bold, larger font
+        monthLabel.setPreferredSize(new Dimension(140, 30)); // Makes each month take up the same space
 
         // Creates interactable buttons
         JButton prevMonthButton = new JButton("<<");             // button to go to previous month
         JButton nextMonthButton = new JButton(">>");             // button to go to next month
-
+        JButton addEntry = new JButton("+");             // button to go to previous month
+        JButton removeEntry = new JButton("-");             // button to go to next month
 
         // Add buttons and label to top panel
-        bottomPanel.add(prevMonthButton, BorderLayout.WEST);        // place prev button on left
-        bottomPanel.add(monthLabel, BorderLayout.CENTER);      // place month label in center
-        bottomPanel.add(nextMonthButton, BorderLayout.EAST);        // place next button on right
+        monthPanel.add(Box.createHorizontalGlue());
+        monthPanel.add(prevMonthButton);        // place prev button on left
+        monthPanel.add(monthLabel);      // place month label in center
+        monthPanel.add(nextMonthButton);        // place next button on right
+        monthPanel.add(Box.createHorizontalGlue());
+        FoodEntryPanel.add(removeEntry);
+        FoodEntryPanel.add(addEntry);
+        bottomPanel.add(FoodEntryPanel, BorderLayout.EAST);        // place next button on right
 
+        bottomPanel.add(monthPanel, BorderLayout.NORTH);
         calendarScreen.add(bottomPanel, BorderLayout.SOUTH);            // add top panel to top of window
 
         // Left button, goes to month before
@@ -117,7 +130,7 @@ public class CalendarApp {
         calendar = new PanelDate(currentDate);                    // create calendar for current month
         calendarPanel.add(calendar, BorderLayout.CENTER);      // add calendar to container
 
-        calendarPanel.setPreferredSize(new Dimension(frame.getWidth(), 350)); // Makes it so the calendar is always 350 pixels tall, preventing inconsistent UI
+        calendarPanel.setPreferredSize(new Dimension(frame.getWidth(), 350)); // Makes it so the calendar is always 350 pixels tall, preventing inconsistent UI and a larger calendar
         calendarScreen.add(calendarPanel, BorderLayout.CENTER);         // add container to main frame
 
         // Based on current date, update the month
@@ -132,13 +145,17 @@ public class CalendarApp {
         JButton the = new JButton("the");
 
         expirationPanel.add(the, BorderLayout.NORTH);
+        frame.add(expirationPanel, BorderLayout.CENTER);
     }
     // UI setup
     private void createAndShowUI() {
+
         createFrame();
-        createYearPanel();
+        // Year and month panel must be created before calendar as calendar updates their labels.
         createMonthPanel();
+        createYearPanel();
         createCalendar();
+
         createExpirationPanel();
     }
 
