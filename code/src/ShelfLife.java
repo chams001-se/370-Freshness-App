@@ -16,7 +16,7 @@ public class ShelfLife extends JFrame {
         this.setTitle("ShelfLife");
                // create & titles main window
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // close app on exit
-        this.setSize(500, 1100);                        // initial window size
+        this.setSize(425, 800);                        // initial window size
         this.setLayout(new BorderLayout());            // BorderLayout for top, bottom, and center
         this.setVisible(true);                     // show the window
     }

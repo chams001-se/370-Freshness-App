@@ -160,7 +160,7 @@ public class CalendarPanel extends JPanel{
         calendar = new PanelDate(currentDate);                    // create calendar for current month
         calendarPanel.add(calendar, BorderLayout.CENTER);      // add calendar to container
 
-        calendarPanel.setPreferredSize(new Dimension(this.getWidth(), 350)); // Makes it so the calendar is always 350 pixels tall, preventing inconsistent UI and a larger calendar
+        calendarPanel.setPreferredSize(new Dimension(this.getWidth(), 300)); // Makes it so the calendar is always 350 pixels tall, preventing inconsistent UI and a larger calendar
         this.add(calendarPanel, BorderLayout.CENTER);         // add container to main frame
 
         // Based on current date, update the month
@@ -182,12 +182,14 @@ public class CalendarPanel extends JPanel{
         currentDate = currentDate.minusMonths(1); // decrement month
         calendar.setMonth(currentDate);            // update calendar grid
         updateMonthLabel();                         // update label text
+        updateYearLabel();
     }
 
     private void goToNextMonth() {
         currentDate = currentDate.plusMonths(1);  // increment month
         calendar.setMonth(currentDate);            // update calendar grid
         updateMonthLabel();                         // update label text
+        updateYearLabel();
     }
 
     // Change month label, called after the month on the calendar is adjusted
