@@ -11,6 +11,14 @@ public class CalendarPanel extends JPanel{
     private JLabel yearLabel;         // label showing current month/year
     private JButton nextYearButton;
     private JButton prevYearButton;
+
+    private JButton settingsButton;
+
+    private JButton addEntry;
+
+    private JButton removeEntry;
+
+    private JButton buttons[];
     private PanelDate calendar;        // calendar panel (grid of days)
     private YearMonth currentDate;    // tracks the currently displayed month
 
@@ -18,6 +26,10 @@ public class CalendarPanel extends JPanel{
         this.setLayout(new BorderLayout());
         currentDate = YearMonth.now(); // start with current month
         createAndShowUI();             // build and display the GUI
+
+        // After the UI is made and all the buttons are defined they can now be dropped in a list to be unfocused all together
+        buttons = new JButton[] {nextMonthButton, prevMonthButton, nextYearButton, prevYearButton, settingsButton, addEntry, removeEntry};
+        unfocusButtons();
 
         // Right button, goes to month after
         nextYearButton.addActionListener(new java.awt.event.ActionListener() {
@@ -81,7 +93,7 @@ public class CalendarPanel extends JPanel{
         settingsPanel.setLayout(new BoxLayout(settingsPanel, BoxLayout.X_AXIS));
 
         // Creates the add entry and remove entry buttons.
-        JButton settingsButton = new JButton("SETTINGS");
+        settingsButton = new JButton("SETTINGS");
 
         // Since this is a boxlayout on the X_AXIS, the buttons are placed correctly without any specification needed
         settingsPanel.add(settingsButton);
@@ -126,8 +138,8 @@ public class CalendarPanel extends JPanel{
         FoodEntryPanel.setLayout(new BoxLayout(FoodEntryPanel, BoxLayout.X_AXIS));
 
         // Creates the add entry and remove entry buttons.
-        JButton addEntry = new JButton("+");             // button to go to previous month
-        JButton removeEntry = new JButton("-");             // button to go to next month
+        addEntry = new JButton("+");             // button to go to previous month
+        removeEntry = new JButton("-");             // button to go to next month
 
         // Since this is a boxlayout on the X_AXIS, the buttons are placed correctly without any specification needed
         FoodEntryPanel.add(removeEntry);
@@ -163,6 +175,7 @@ public class CalendarPanel extends JPanel{
         createMonthPanel();
         createYearPanel();
         createCalendar();
+
     }
 
     private void goToPreviousMonth() {
@@ -203,5 +216,11 @@ public class CalendarPanel extends JPanel{
     private void updateYearLabel() {
         // Turns the integer of the current year into a string and sets the year to it
         yearLabel.setText(String.valueOf(currentDate.getYear()));
+    }
+
+    private void unfocusButtons(){
+        for (JButton button : buttons){
+            button.setFocusable(false);
+        }
     }
 }
