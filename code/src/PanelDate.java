@@ -38,6 +38,7 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
         // add buttons for each day of the month
         for (int day = 1; day <= daysInMonth; day++) {
             JButton dayButton = new JButton(String.valueOf(day)); // button showing day number
+            dayButton.setFocusable(false); // No longer highlight of text when buttons are interacted
             // highlight today's date
             LocalDate today = LocalDate.now();
             if (today.getYear() == currentMonth.getYear()
