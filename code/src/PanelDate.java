@@ -27,6 +27,8 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
 
     // Attaches each button created to its date.
     HashMap<JButton, LocalDate> buttonDates = new HashMap<>();
+
+    private JButton selectedButton;
     public PanelDate() {}
 
     JButton previouslySelected = null;
@@ -41,6 +43,7 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
             // If this function is called a date button has been interacted with, meaning that it's previous color should be assigned back to it.
             if (previouslySelected != null){
                 previouslySelected.setBackground(previousSelectedColor);
+                previouslySelected.setEnabled(true);
             }
 
             // Saves the current button into previously selected in case another date is chosen in the future.
@@ -51,6 +54,7 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
             dateSelected.setBackground(Color.PINK);
 
             System.out.println(buttonDates.get(dateSelected));
+            dateSelected.setEnabled(false);
         }
     };
 
@@ -101,13 +105,24 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
                 dayButton.setBackground(Color.CYAN); // highlight current day
             }
 
+
+
+
             buttonDates.put(dayButton, buttonDate);
+
+            if (previouslySelected != null) {
+                if (buttonDates.get(previouslySelected).getYear() == currentMonth.getYear()
+                        && buttonDates.get(previouslySelected).getMonth() == currentMonth.getMonth()
+                        && buttonDates.get(previouslySelected).getDayOfMonth() == day) {
+                    dayButton.setBackground(Color.PINK); // highlight current day
+                }
+            }
             this.add(dayButton); // add day button to the grid
 
             // Adds the button to an action listener which will be called whenever anything added is pressed.
             dayButton.addActionListener(dateSelector);
 
-            System.out.println(buttonDate);
+            // Increments the day value for the next button
             buttonDate = buttonDate.plusDays(1);
         }
 
