@@ -4,14 +4,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;     // to get current date
 import java.time.YearMonth;     // represents a month in a specific year
+import java.util.HashMap;
+import java.util.Map;
+
+
+/*
+public class DateButton extends JButton {
+    YearMonth date = null;
+    public YearMonth getDate(){
+        return date;
+    }
+
+    public void setDate(YearMonth d){
+        date = d;
+    }
+}
+ */
 
 public class PanelDate extends JPanel {   // custom JPanel to display a month calendar
     private YearMonth currentMonth;       // holds the currently displayed month
     private JButton dayButton;
 
+    // Attaches each button created to its date.
+    HashMap<JButton, LocalDate> buttonDates = new HashMap<>();
+    public PanelDate() {}
+
     JButton previouslySelected = null;
     Color previousSelectedColor = null;
-    boolean daySelected = false;
     private ActionListener dateSelector = new ActionListener() {
         @Override
         // Prevents multiple dates being selected.
@@ -30,6 +49,8 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
 
             // Sets the color
             dateSelected.setBackground(Color.PINK);
+
+            System.out.println(buttonDates.get(dateSelected));
         }
     };
 
@@ -46,6 +67,8 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
     private void buildCalendar() {
         this.removeAll();                // clear any existing components
         this.setLayout(new GridLayout(0, 7)); // grid of 7 columns for 7 days
+        LocalDate today = LocalDate.now();
+
 
         // add weekday headers
         String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
@@ -59,6 +82,7 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
         LocalDate firstOfMonth = currentMonth.atDay(1);
         int dayOfWeekValue = firstOfMonth.getDayOfWeek().getValue() % 7; // sunday = 0
         int daysInMonth = currentMonth.lengthOfMonth();                  // total days
+        LocalDate buttonDate = firstOfMonth;
 
         // fill empty cells for days before the first of the month
         for (int i = 0; i < dayOfWeekValue; i++) {
@@ -70,18 +94,22 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
             dayButton = new JButton(String.valueOf(day)); // button showing day number
             dayButton.setFocusable(false); // No longer highlight of text when buttons are interacted
             // highlight today's date
-            LocalDate today = LocalDate.now();
+
             if (today.getYear() == currentMonth.getYear()
                     && today.getMonth() == currentMonth.getMonth()
                     && today.getDayOfMonth() == day) {
                 dayButton.setBackground(Color.CYAN); // highlight current day
             }
+
+            buttonDates.put(dayButton, buttonDate);
             this.add(dayButton); // add day button to the grid
 
             // Adds the button to an action listener which will be called whenever anything added is pressed.
             dayButton.addActionListener(dateSelector);
-        }
 
+            System.out.println(buttonDate);
+            buttonDate = buttonDate.plusDays(1);
+        }
 
         this.revalidate(); // refresh layout
         this.repaint();    // redraw panel
