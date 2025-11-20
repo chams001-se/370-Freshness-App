@@ -1,15 +1,45 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalDate;     // to get current date
 import java.time.YearMonth;     // represents a month in a specific year
 
 public class PanelDate extends JPanel {   // custom JPanel to display a month calendar
     private YearMonth currentMonth;       // holds the currently displayed month
+    private JButton dayButton;
+
+    JButton previouslySelected = null;
+    Color previousSelectedColor = null;
+    boolean daySelected = false;
+    private ActionListener dateSelector = new ActionListener() {
+        @Override
+        // Prevents multiple dates being selected.
+        public void actionPerformed(ActionEvent ae){
+            Object source = ae.getSource();
+            JButton dateSelected = (JButton) source;
+            // If previously selected is not null, then there is a previously selected date present
+            // If this function is called a date button has been interacted with, meaning that it's previous color should be assigned back to it.
+            if (previouslySelected != null){
+                previouslySelected.setBackground(previousSelectedColor);
+            }
+
+            // Saves the current button into previously selected in case another date is chosen in the future.
+            previouslySelected = dateSelected;
+            previousSelectedColor = dateSelected.getBackground();
+
+            // Sets the color
+            dateSelected.setBackground(Color.PINK);
+        }
+    };
+
 
     // constructor that initializes the calendar with a given month
     public PanelDate(YearMonth month) {
         this.currentMonth = month;       // set current month
         buildCalendar();                 // build the calendar UI
+
+
     }
 
     // method to build or rebuild the calendar grid
@@ -37,7 +67,7 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
 
         // add buttons for each day of the month
         for (int day = 1; day <= daysInMonth; day++) {
-            JButton dayButton = new JButton(String.valueOf(day)); // button showing day number
+            dayButton = new JButton(String.valueOf(day)); // button showing day number
             dayButton.setFocusable(false); // No longer highlight of text when buttons are interacted
             // highlight today's date
             LocalDate today = LocalDate.now();
@@ -46,9 +76,12 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
                     && today.getDayOfMonth() == day) {
                 dayButton.setBackground(Color.CYAN); // highlight current day
             }
-
             this.add(dayButton); // add day button to the grid
+
+            // Adds the button to an action listener which will be called whenever anything added is pressed.
+            dayButton.addActionListener(dateSelector);
         }
+
 
         this.revalidate(); // refresh layout
         this.repaint();    // redraw panel
