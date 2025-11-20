@@ -8,29 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-/*
-public class DateButton extends JButton {
-    YearMonth date = null;
-    public YearMonth getDate(){
-        return date;
-    }
-
-    public void setDate(YearMonth d){
-        date = d;
-    }
-}
- */
-
 public class PanelDate extends JPanel {   // custom JPanel to display a month calendar
     private YearMonth currentMonth;       // holds the currently displayed month
     private JButton dayButton;
 
     // Attaches each button created to its date.
     HashMap<JButton, LocalDate> buttonDates = new HashMap<>();
-
-    private JButton selectedButton;
-    public PanelDate() {}
-
     JButton previouslySelected = null;
     Color previousSelectedColor = null;
     private ActionListener dateSelector = new ActionListener() {
@@ -110,6 +93,7 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
 
             buttonDates.put(dayButton, buttonDate);
 
+            // TODO proper loading of selected date if the user switches dates
             if (previouslySelected != null) {
                 if (buttonDates.get(previouslySelected).getYear() == currentMonth.getYear()
                         && buttonDates.get(previouslySelected).getMonth() == currentMonth.getMonth()
