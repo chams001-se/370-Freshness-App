@@ -14,6 +14,7 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
 
     // Attaches each button created to its date.
     HashMap<JButton, LocalDate> buttonDates = new HashMap<>();
+    JButton dateSelected;
     JButton previouslySelected = null;
     Color previousSelectedColor = null;
     private ActionListener dateSelector = new ActionListener() {
@@ -21,23 +22,9 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
         // Prevents multiple dates being selected.
         public void actionPerformed(ActionEvent ae){
             Object source = ae.getSource();
-            JButton dateSelected = (JButton) source;
-            // If previously selected is not null, then there is a previously selected date present
-            // If this function is called a date button has been interacted with, meaning that it's previous color should be assigned back to it.
-            if (previouslySelected != null){
-                previouslySelected.setBackground(previousSelectedColor);
-                previouslySelected.setEnabled(true);
-            }
+            dateSelected = (JButton) source;
+            buttonHighlight(dateSelected);
 
-            // Saves the current button into previously selected in case another date is chosen in the future.
-            previouslySelected = dateSelected;
-            previousSelectedColor = dateSelected.getBackground();
-
-            // Sets the color
-            dateSelected.setBackground(Color.PINK);
-
-            System.out.println(buttonDates.get(dateSelected));
-            dateSelected.setEnabled(false);
         }
     };
 
@@ -93,12 +80,12 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
 
             buttonDates.put(dayButton, buttonDate);
 
-            // TODO proper loading of selected date if the user switches dates
+            // Properly saves the date already highlighted.
             if (previouslySelected != null) {
                 if (buttonDates.get(previouslySelected).getYear() == currentMonth.getYear()
                         && buttonDates.get(previouslySelected).getMonth() == currentMonth.getMonth()
                         && buttonDates.get(previouslySelected).getDayOfMonth() == day) {
-                    dayButton.setBackground(Color.PINK); // highlight current day
+                    buttonHighlight(dayButton); // highlight current day
                 }
             }
             this.add(dayButton); // add day button to the grid
@@ -118,5 +105,30 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
     public void setMonth(YearMonth month) {
         this.currentMonth = month; // change month
         buildCalendar();           // rebuild the calendar grid
+    }
+
+    public void buttonHighlight(JButton selected){
+        // If previously selected is not null, then there is a previously selected date present
+        // If this function is called a date button has been interacted with, meaning that it's previous color should be assigned back to it.
+        if (previouslySelected != null){
+            previouslySelected.setBackground(previousSelectedColor);
+        }
+
+        // If the button that was selected is the same as the previously selected button then the button should be unselected/highlighted
+        if (selected.equals(previouslySelected)){
+            selected.setBackground(previousSelectedColor);
+            // Resets because nothing will be considered selected previously anymore
+            previouslySelected = null;
+            previousSelectedColor = null;
+        } else {
+            // Saves the current button into previously selected in case another date is chosen in the future.
+            previouslySelected = selected;
+            previousSelectedColor = selected.getBackground();
+
+            // Sets the color
+            selected.setBackground(Color.PINK);
+        }
+
+        System.out.println(buttonDates.get(selected));
     }
 }
