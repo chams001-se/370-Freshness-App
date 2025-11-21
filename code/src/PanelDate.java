@@ -17,6 +17,7 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
     JButton dateSelected;
     JButton previouslySelected = null;
     Color previousSelectedColor = null;
+
     private ActionListener dateSelector = new ActionListener() {
         @Override
         // Prevents multiple dates being selected.
@@ -74,9 +75,6 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
                     && today.getDayOfMonth() == day) {
                 dayButton.setBackground(Color.CYAN); // highlight current day
             }
-
-
-
 
             buttonDates.put(dayButton, buttonDate);
 

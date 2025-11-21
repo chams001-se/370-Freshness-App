@@ -31,6 +31,7 @@ public class CalendarPanel extends JPanel{
         buttons = new JButton[] {nextMonthButton, prevMonthButton, nextYearButton, prevYearButton, settingsButton, addEntry, removeEntry};
         unfocusButtons();
 
+
         // Right button, goes to month after
         nextYearButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -52,13 +53,12 @@ public class CalendarPanel extends JPanel{
             }
         });
 
-        // Right button, goes to month after
+                // Right button, goes to month after
         nextMonthButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 goToNextMonth();                   // call method to handle next month
             }
         });
-
     }
 
 
