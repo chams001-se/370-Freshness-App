@@ -129,4 +129,13 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
 
         System.out.println(buttonDates.get(selected));
     }
+
+    // returns LocalDate for whatever date is currently selected
+    // if no date is selected, it returns null
+    public LocalDate getSelectedDate() {
+        if (previouslySelected == null) {
+            return null;
+        }
+        return buttonDates.get(previouslySelected);
+    }
 }

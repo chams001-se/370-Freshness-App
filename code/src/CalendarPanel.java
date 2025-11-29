@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 
 public class CalendarPanel extends JPanel{
     private JLabel monthLabel;         // label showing current month/year
@@ -63,29 +64,42 @@ public class CalendarPanel extends JPanel{
             }
         });
 
-        // add entry logic
+        // add entry logic (uses selected date from calendar)
         addEntry.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                // create panel to hold all input fields (product, quantity, and expiration date)
-                JPanel inputPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+                // get expiration date from calendar
+                LocalDate expirationDate = calendar.getSelectedDate();
+                if (expirationDate == null) {
+                    JOptionPane.showMessageDialog(CalendarPanel.this, "Please select a date on the calendar!");
+                    return;
+                }
+
+                // create panel to hold input fields (product and quantity)
+                JPanel inputPanel = new JPanel(new GridLayout(2, 2, 5, 5));
 
                 // create labels and input fields
                 JTextField nameField = new JTextField();
                 JTextField quantityField = new JTextField();
-                JTextField dateField = new JTextField();
 
                 inputPanel.add(new JLabel("Enter Food Product:"));
                 inputPanel.add(nameField);
                 inputPanel.add(new JLabel("Enter Food Quantity:"));
                 inputPanel.add(quantityField);
-                inputPanel.add(new JLabel("Enter Expiration Date (MM-DD-YYYY):"));
-                inputPanel.add(dateField);
+
+                // format date in a way that ignores different date formats
+                // to get past different date formats, we simply print it out with something
+                // like "November 30, 2025"
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
+                String formattedDate = expirationDate.format(formatter);
+
+                // date title has the format explained above
+                String dateTitle = "Add Food Entry on " + formattedDate;
 
                 // show confirm dialog with custom panel
                 int result = JOptionPane.showConfirmDialog(
                         CalendarPanel.this,
                         inputPanel,
-                        "Add Food Entry",
+                        dateTitle,
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE
                 );
@@ -97,36 +111,16 @@ public class CalendarPanel extends JPanel{
                 // get input values
                 String name = nameField.getText();
                 String qtyStr = quantityField.getText();
-                String dateStr = dateField.getText();
 
-                if (name.isEmpty() || qtyStr.isEmpty() || dateStr.isEmpty()) {
-                    return;
+                if (name.isEmpty() || qtyStr.isEmpty()) {
+                    return; // fields cannot be empty
                 }
 
                 int quantity;
                 try {
-                    quantity = Integer.parseInt(qtyStr);
+                    quantity = Integer.parseInt(qtyStr); // parse quantity
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(CalendarPanel.this, "Invalid quantity!");
-                    return;
-                }
-
-                LocalDate expirationDate;
-                try {
-                    // parse date entry format
-                    String[] parts = dateStr.split("-");
-                    if (parts.length != 3) throw new Exception();
-                    int month = Integer.parseInt(parts[0]);
-                    int day = Integer.parseInt(parts[1]);
-                    int year = Integer.parseInt(parts[2]);
-
-                    // validation for month and day
-                    if (month < 1 || month > 12 || day < 1 || day > 31) {
-                        throw new Exception();
-                    }
-                    expirationDate = LocalDate.of(year, month, day);
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(CalendarPanel.this, "Invalid date format! Use MM-DD-YYYY");
                     return;
                 }
 
