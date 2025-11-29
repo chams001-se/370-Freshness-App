@@ -104,6 +104,7 @@ public class FoodExpirationPanel extends JPanel {
         // scroll box functionality for list of food entries
         JScrollPane scrollPane = new JScrollPane(listPanel);
         scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
         this.add(scrollPane, BorderLayout.CENTER);
         this.revalidate();
@@ -121,7 +122,7 @@ public class FoodExpirationPanel extends JPanel {
         } else if (daysLeft <= 3) {
             return new Color(255, 226, 2, 255);        // expires soon
         } else {
-            return new Color(55,252,140, 205);         // fresh
+            return new Color(55, 252, 140);     // fresh
         }
     }
 }
