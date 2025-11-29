@@ -5,9 +5,12 @@ import java.util.List;
 import java.time.LocalDate; //Temporary (test entries use this)
 
 public class ShelfLife extends JFrame {
+    // make FoodExpirationPanel a field so it can be accessed by CalendarPanel
+    private FoodExpirationPanel fd;
+
     public ShelfLife() {
         CalendarPanel cal = new CalendarPanel();
-        FoodExpirationPanel fd = new FoodExpirationPanel();
+        fd = new FoodExpirationPanel(); // assign to field
         createFrame();
         this.add(cal, BorderLayout.NORTH);
         this.add(fd, BorderLayout.CENTER);
@@ -51,9 +54,6 @@ public class ShelfLife extends JFrame {
         fd.refreshEntries(entries);
     }
 
-
-
-
     // JFrame is used to hold all various components inside a JPanel
     // Creates the window
     private void createFrame() {
@@ -77,6 +77,11 @@ public class ShelfLife extends JFrame {
     //Get every entry for FoodExpirationPanel to use
     public List<FoodEntry> getEntries() {
         return entries;
+    }
+
+    // getter for CalendarPanel / addEntry usage
+    public FoodExpirationPanel getFoodExpirationPanel() {
+        return fd;
     }
     //---------------------------------------------------
 }

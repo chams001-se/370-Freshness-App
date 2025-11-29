@@ -80,7 +80,7 @@ public class FoodExpirationPanel extends JPanel {
                 text += "  EXPIRED  ";
             } else if (daysLeft == 1) {
                 text += "  expires TODAY  ";
-           } else if (daysLeft <= 3) {
+            } else if (daysLeft <= 3) {
                 text += "  expires in  " + daysLeft + "  days  ";
             } else {
                 text += "  expires in  " + daysLeft + "  days  ";
@@ -95,17 +95,8 @@ public class FoodExpirationPanel extends JPanel {
             // set font size for food entries
             info.setFont(info.getFont().deriveFont(18f));
 
-
-            // draw background color for each row depending on freshness state
-            if (daysLeft < 0) {
-                row.setBackground(new Color (255, 103, 103, 255));
-            } else if (daysLeft == 1) {
-                row.setBackground(new Color(255, 138, 76));
-            } else if (daysLeft <= 3) {
-                row.setBackground(new Color(255, 226, 2, 255));
-            } else{
-                row.setBackground(new Color(55,252,140, 205));
-            }
+            // draw background color for each row depending on freshness state using reusable method
+            row.setBackground(getEntryColor(daysLeft));
 
             listPanel.add(row);
         }
@@ -118,5 +109,19 @@ public class FoodExpirationPanel extends JPanel {
         this.revalidate();
         this.repaint();
 
+    }
+
+    // reusable static method for color coding based on days left
+    // made this so we could just reuse it in the remove entry button checkbox list
+    public static Color getEntryColor(long daysLeft) {
+        if (daysLeft < 0) {
+            return new Color (255, 103, 103, 255);       // expired
+        } else if (daysLeft == 1) {
+            return new Color(255, 138, 76);             // expires today
+        } else if (daysLeft <= 3) {
+            return new Color(255, 226, 2, 255);        // expires soon
+        } else {
+            return new Color(55,252,140, 205);         // fresh
+        }
     }
 }

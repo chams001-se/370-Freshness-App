@@ -3,6 +3,9 @@ import java.awt.*;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.Locale;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.ArrayList;
 
 public class CalendarPanel extends JPanel{
     private JLabel monthLabel;         // label showing current month/year
@@ -53,10 +56,153 @@ public class CalendarPanel extends JPanel{
             }
         });
 
-                // Right button, goes to month after
+        // Right button, goes to month after
         nextMonthButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 goToNextMonth();                   // call method to handle next month
+            }
+        });
+
+        // add entry logic
+        addEntry.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                // create panel to hold all input fields (product, quantity, and expiration date)
+                JPanel inputPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+
+                // create labels and input fields
+                JTextField nameField = new JTextField();
+                JTextField quantityField = new JTextField();
+                JTextField dateField = new JTextField();
+
+                inputPanel.add(new JLabel("Enter Food Product:"));
+                inputPanel.add(nameField);
+                inputPanel.add(new JLabel("Enter Food Quantity:"));
+                inputPanel.add(quantityField);
+                inputPanel.add(new JLabel("Enter Expiration Date (MM-DD-YYYY):"));
+                inputPanel.add(dateField);
+
+                // show confirm dialog with custom panel
+                int result = JOptionPane.showConfirmDialog(
+                        CalendarPanel.this,
+                        inputPanel,
+                        "Add Food Entry",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE
+                );
+
+                if (result != JOptionPane.OK_OPTION) {
+                    return; // user cancelled
+                }
+
+                // get input values
+                String name = nameField.getText();
+                String qtyStr = quantityField.getText();
+                String dateStr = dateField.getText();
+
+                if (name.isEmpty() || qtyStr.isEmpty() || dateStr.isEmpty()) {
+                    return;
+                }
+
+                int quantity;
+                try {
+                    quantity = Integer.parseInt(qtyStr);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(CalendarPanel.this, "Invalid quantity!");
+                    return;
+                }
+
+                LocalDate expirationDate;
+                try {
+                    // parse date entry format
+                    String[] parts = dateStr.split("-");
+                    if (parts.length != 3) throw new Exception();
+                    int month = Integer.parseInt(parts[0]);
+                    int day = Integer.parseInt(parts[1]);
+                    int year = Integer.parseInt(parts[2]);
+
+                    // validation for month and day
+                    if (month < 1 || month > 12 || day < 1 || day > 31) {
+                        throw new Exception();
+                    }
+                    expirationDate = LocalDate.of(year, month, day);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(CalendarPanel.this, "Invalid date format! Use MM-DD-YYYY");
+                    return;
+                }
+
+                // create FoodEntry and add it
+                FoodEntry entry = new FoodEntry(name, quantity, expirationDate);
+                ShelfLife shelfLifeFrame = (ShelfLife) SwingUtilities.getWindowAncestor(CalendarPanel.this);
+                shelfLifeFrame.addEntry(entry);
+                shelfLifeFrame.getFoodExpirationPanel().refreshEntries(shelfLifeFrame.getEntries());
+            }
+        });
+
+        // remove entry logic
+        removeEntry.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                ShelfLife shelfLifeFrame = (ShelfLife) SwingUtilities.getWindowAncestor(CalendarPanel.this);
+                List<FoodEntry> entries = shelfLifeFrame.getEntries();
+
+                // main panel
+                JPanel listPanel = new JPanel();
+                listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+
+                // list to hold checkboxes
+                List<JCheckBox> checkBoxes = new ArrayList<>();
+
+                // create checkbox for each entry
+                for (FoodEntry entry : entries) {
+                    JPanel row = new JPanel(new BorderLayout());
+                    row.setBorder(BorderFactory.createMatteBorder(2, 5, 2, 5, new Color(238, 238, 238)));
+
+                    // format text for the entry
+                    LocalDate today = LocalDate.now();
+                    long daysLeft = entry.getExpirationDate().toEpochDay() - today.toEpochDay();
+                    String text = entry.getName() + " - Qty: " + entry.getQuantity() +
+                            " - Expires in: " + daysLeft + " days";
+
+                    JLabel label = new JLabel(text);
+                    label.setFont(label.getFont().deriveFont(16f));
+
+                    // color coding from FoodExpirationPanel
+                    row.setBackground(FoodExpirationPanel.getEntryColor(daysLeft));
+
+                    JCheckBox cb = new JCheckBox();
+                    checkBoxes.add(cb);
+
+                    row.add(label, BorderLayout.CENTER);
+                    row.add(cb, BorderLayout.EAST);
+
+                    listPanel.add(row);
+                }
+
+                // scroll pane
+                JScrollPane scrollPane = new JScrollPane(listPanel);
+                scrollPane.setPreferredSize(new Dimension(400, 300));
+
+                // confirm/cancel buttons
+                int result = JOptionPane.showConfirmDialog(
+                        CalendarPanel.this,
+                        scrollPane,
+                        "Select to Remove Food Entries",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE
+                );
+
+                if (result != JOptionPane.OK_OPTION) {
+                    return; // cancelled
+                }
+
+                // remove selected entries
+                for (int i = checkBoxes.size() - 1; i >= 0; i--) {
+                    if (checkBoxes.get(i).isSelected()) {
+                        entries.remove(i);
+                    }
+                }
+
+                // refresh dashboard
+                shelfLifeFrame.getFoodExpirationPanel().refreshEntries(entries);
             }
         });
     }
@@ -130,8 +276,6 @@ public class CalendarPanel extends JPanel{
         monthPanel.add(monthLabel);
         monthPanel.add(nextMonthButton);
         monthPanel.add(Box.createHorizontalGlue());
-
-
 
         // Creates the add entry '+' and remove entry '-' components
         JPanel FoodEntryPanel = new JPanel();
