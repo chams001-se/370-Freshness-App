@@ -173,6 +173,7 @@ public class CalendarPanel extends JPanel{
 
                 // scroll pane
                 JScrollPane scrollPane = new JScrollPane(listPanel);
+                scrollPane.getVerticalScrollBar().setUnitIncrement(20);
                 scrollPane.setPreferredSize(new Dimension(400, 300));
 
                 // confirm/cancel buttons

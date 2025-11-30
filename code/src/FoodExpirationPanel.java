@@ -42,6 +42,19 @@ public class FoodExpirationPanel extends JPanel {
         JPanel listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
+        // only show items within 30 days on the dash
+        java.time.LocalDate compareToday = java.time.LocalDate.now();
+        java.util.List<FoodEntry> filtered = new java.util.ArrayList<>();
+
+        for (FoodEntry e : entries) {
+            long days = java.time.temporal.ChronoUnit.DAYS.between(compareToday, e.getExpirationDate());
+            if (days >= 0 && days <= 30) {
+                filtered.add(e);
+            }
+        }
+
+        entries = filtered;
+
         // sort by expiration date via selection sort
         for (int i = 0; i < entries.size() - 1; i++) {
             int earliestEntry = i;
