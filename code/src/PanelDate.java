@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.time.LocalDate;     // to get current date
 import java.time.YearMonth;     // represents a month in a specific year
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class PanelDate extends JPanel {   // custom JPanel to display a month calendar

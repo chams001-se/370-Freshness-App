@@ -71,7 +71,7 @@ public class ShelfLife extends JFrame {
     // Add new food entry to list
     public void addEntry(FoodEntry entry) {
         entries.add(entry);
-        //W.I.P. (will refresh UI)
+        //TODO: (will refresh UI)
     }
 
     //Get every entry for FoodExpirationPanel to use

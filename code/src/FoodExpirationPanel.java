@@ -1,11 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Scanner;
 
-// TODO
 public class FoodExpirationPanel extends JPanel {
-
     private JLabel foodExpiration;
 
     FoodExpirationPanel() {
@@ -32,6 +33,9 @@ public class FoodExpirationPanel extends JPanel {
         this.removeAll();   // clean out UI
         this.setLayout(new BorderLayout());
 
+        // reload user settings
+        CalendarPanel.loadUserSettings();
+
         // add the title back
         JLabel title = new JLabel("Food Expiring");
         title.setFont(this.getFont().deriveFont(Font.BOLD, 22F));
@@ -43,7 +47,7 @@ public class FoodExpirationPanel extends JPanel {
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
         // only show items within 30 days on the dash
-        java.time.LocalDate compareToday = java.time.LocalDate.now();
+        LocalDate compareToday = LocalDate.now();
         java.util.List<FoodEntry> filtered = new java.util.ArrayList<>();
 
         for (FoodEntry e : entries) {
@@ -71,13 +75,13 @@ public class FoodExpirationPanel extends JPanel {
             }
         }
 
-        java.time.LocalDate today = java.time.LocalDate.now();
+        LocalDate today = LocalDate.now();
 
         for (FoodEntry entry : entries) {
             // new row is made for any new entries
             JPanel row = new JPanel();
             row.setLayout(new BorderLayout());
-            row.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            row.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
             // draw a boarder around each entry to create space between them
             row.setBorder(BorderFactory.createMatteBorder(3, 6, 3, 6, new Color(238,238,238)));
@@ -89,11 +93,11 @@ public class FoodExpirationPanel extends JPanel {
             // display text
             String text = " " + entry.getName() + ":";
 
-            if (daysLeft < 0) {
+            if (daysLeft <= 0) {
                 text += "  EXPIRED  ";
             } else if (daysLeft == 1) {
                 text += "  expires TODAY  ";
-            } else if (daysLeft <= 3) {
+            } else if (daysLeft <= CalendarPanel.userWarningDays) {
                 text += "  expires in  " + daysLeft + "  days  ";
             } else {
                 text += "  expires in  " + daysLeft + "  days  ";
@@ -128,14 +132,14 @@ public class FoodExpirationPanel extends JPanel {
     // reusable static method for color coding based on days left
     // made this so we could just reuse it in the remove entry button checkbox list
     public static Color getEntryColor(long daysLeft) {
-        if (daysLeft < 0) {
-            return new Color (255, 103, 103, 255);       // expired
+        if (daysLeft <= 0) {
+            return CalendarPanel.userColors[0];        // expired
         } else if (daysLeft == 1) {
-            return new Color(255, 138, 76);             // expires today
-        } else if (daysLeft <= 3) {
-            return new Color(255, 226, 2, 255);        // expires soon
+            return CalendarPanel.userColors[1];        // expires today
+        } else if (daysLeft <= CalendarPanel.userWarningDays) {
+            return CalendarPanel.userColors[2];        // expire warning
         } else {
-            return new Color(55, 252, 140);     // fresh
+            return CalendarPanel.userColors[3];        // fresh
         }
     }
 }
