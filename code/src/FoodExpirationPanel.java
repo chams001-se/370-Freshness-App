@@ -113,7 +113,7 @@ public class FoodExpirationPanel extends JPanel {
             if (daysLeft <= 0) {
                 daysTillExpiration.setText("  EXPIRED  ");
             } else if (daysLeft == 1) {
-                daysTillExpiration.setText("  Expires TODAY  ");
+                daysTillExpiration.setText("  Expires TOMORROW  ");
             } else if (daysLeft <= CalendarPanel.userWarningDays) {
                 daysTillExpiration.setText("  Expires in  " + daysLeft + "  days  ");
             } else {
@@ -148,7 +148,7 @@ public class FoodExpirationPanel extends JPanel {
         if (daysLeft <= 0) {
             return CalendarPanel.userColors[0];        // expired
         } else if (daysLeft == 1) {
-            return CalendarPanel.userColors[1];        // expires today
+            return CalendarPanel.userColors[1];        // expires tomorrow
         } else if (daysLeft <= CalendarPanel.userWarningDays) {
             return CalendarPanel.userColors[2];        // expire warning
         } else {
