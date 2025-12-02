@@ -482,20 +482,20 @@ public class CalendarPanel extends JPanel {
         colorPickerButton(freshColorButton, 3);
 
         // create labels
-        settingsPanel.add(new JLabel("Expiration Warning Range"));
+        settingsPanel.add(new JLabel("Expiration Settings"));
         settingsPanel.add(new JLabel(""));                        // empty text
         settingsPanel.add(new JLabel(""));                        // empty text
         settingsPanel.add(expiredColorButton);
-        settingsPanel.add(new JLabel("Food Product Expired"));
+        settingsPanel.add(new JLabel("Expired"));
         settingsPanel.add(new JLabel(""));                        // empty text
         settingsPanel.add(todayColorButton);
-        settingsPanel.add(new JLabel("Food Product Expires Today"));
+        settingsPanel.add(new JLabel("Expires Today"));
         settingsPanel.add(new JLabel(""));                        // empty text
         settingsPanel.add(warningColorButton);
-        settingsPanel.add(new JLabel("Food Product Warning (in days)"));
+        settingsPanel.add(new JLabel("Warning (in days)"));
         settingsPanel.add(warningDays);
         settingsPanel.add(freshColorButton);
-        settingsPanel.add(new JLabel("Food Product Fresh"));
+        settingsPanel.add(new JLabel("Fresh"));
         settingsPanel.add(new JLabel(""));                        // empty text
 
         // show confirm dialog with custom panel
