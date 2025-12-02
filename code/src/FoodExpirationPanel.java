@@ -1,19 +1,23 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Scanner;
+
+// Painting raw on the display will result in the painting getting overridden by the layout
+// We must create a panel to host the painting
+class SeparatorLine extends JPanel {
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setStroke(new BasicStroke(2.5f));
+        g2.draw(new Line2D.Double(0, getHeight()/2, getWidth(), getHeight()/2));
+    }
+}
 
 public class FoodExpirationPanel extends JPanel {
-    private JLabel foodExpiration;
-
     FoodExpirationPanel() {
-        FoodExpirationPanelTitle();
-        JButton button = new JButton("Refresh");
-        setLayout(new BorderLayout());
-        button.setHorizontalAlignment(JLabel.RIGHT);
+        createHeader();
     }
 
     @Override
@@ -24,22 +28,29 @@ public class FoodExpirationPanel extends JPanel {
         // cast it into a Graphics2D as it is required in order to be able to draw anything.
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(5f));
-        g2.draw(new Line2D.Double(0, 0, 500, 0));
+        g2.draw(new Line2D.Double(100, 60, 500, 60));
 
     }
 
-    public void FoodExpirationPanelTitle(){
+    public void createHeader(){
+        this.setLayout(new BorderLayout());
+        JPanel header = new JPanel(new BorderLayout());
         JLabel title = new JLabel("Food Expiring");
         title.setFont(this.getFont().deriveFont(Font.BOLD, 22F));
-        title.setHorizontalAlignment(JLabel.LEFT);
-        this.add(title, BorderLayout.NORTH);
+        header.add(title, BorderLayout.WEST);
+
+        JButton refreshButton = new JButton("Refresh");
+        header.add(refreshButton, BorderLayout.EAST);
+        header.add(new SeparatorLine(), BorderLayout.NORTH);
+        header.add(new SeparatorLine(), BorderLayout.SOUTH);
+        this.add(header, BorderLayout.NORTH);
 
     }
 
     public void refreshEntries(java.util.List<FoodEntry> entries) {
         this.removeAll();   // clean out UI
         this.setLayout(new BorderLayout());
-        FoodExpirationPanelTitle();
+        createHeader();
         // reload user settings
         CalendarPanel.loadUserSettings();
 

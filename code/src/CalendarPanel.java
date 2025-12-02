@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Line2D;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -537,4 +538,5 @@ public class CalendarPanel extends JPanel {
         List<FoodEntry> entries = shelfLifeFrame.getEntries();
         shelfLifeFrame.getFoodExpirationPanel().refreshEntries(entries);
     }
+
 }
