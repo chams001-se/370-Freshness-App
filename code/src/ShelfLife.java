@@ -63,6 +63,7 @@ public class ShelfLife extends JFrame {
         this.setSize(425, 800);                        // initial window size
         this.setLayout(new BorderLayout());            // BorderLayout for top, bottom, and center
         this.setVisible(true);                     // show the window
+        this.setResizable(false);
     }
 
     //-----------------Database-------------------------

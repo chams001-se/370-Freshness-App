@@ -10,11 +10,10 @@ public class FoodExpirationPanel extends JPanel {
     private JLabel foodExpiration;
 
     FoodExpirationPanel() {
-        foodExpiration = new JLabel("Food Expiring");
-        foodExpiration.setFont(this.getFont().deriveFont(Font.BOLD, 22f));
+        FoodExpirationPanelTitle();
+        JButton button = new JButton("Refresh");
         setLayout(new BorderLayout());
-        foodExpiration.setHorizontalAlignment(JLabel.LEFT);
-        this.add(foodExpiration, BorderLayout.NORTH);
+        button.setHorizontalAlignment(JLabel.RIGHT);
     }
 
     @Override
@@ -29,18 +28,20 @@ public class FoodExpirationPanel extends JPanel {
 
     }
 
-    public void refreshEntries(java.util.List<FoodEntry> entries) {
-        this.removeAll();   // clean out UI
-        this.setLayout(new BorderLayout());
-
-        // reload user settings
-        CalendarPanel.loadUserSettings();
-
-        // add the title back
+    public void FoodExpirationPanelTitle(){
         JLabel title = new JLabel("Food Expiring");
         title.setFont(this.getFont().deriveFont(Font.BOLD, 22F));
         title.setHorizontalAlignment(JLabel.LEFT);
         this.add(title, BorderLayout.NORTH);
+
+    }
+
+    public void refreshEntries(java.util.List<FoodEntry> entries) {
+        this.removeAll();   // clean out UI
+        this.setLayout(new BorderLayout());
+        FoodExpirationPanelTitle();
+        // reload user settings
+        CalendarPanel.loadUserSettings();
 
         // area that contains the rows for the food entries
         JPanel listPanel = new JPanel();
@@ -80,7 +81,7 @@ public class FoodExpirationPanel extends JPanel {
         for (FoodEntry entry : entries) {
             // new row is made for any new entries
             JPanel row = new JPanel();
-            row.setLayout(new BorderLayout());
+            row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
             row.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
             // draw a boarder around each entry to create space between them
@@ -91,26 +92,27 @@ public class FoodExpirationPanel extends JPanel {
             long daysLeft = exp.toEpochDay() - today.toEpochDay();
 
             // display text
-            String text = " " + entry.getName() + ":";
+            JLabel productName = new JLabel(" " + entry.getName() + ":");
+            JLabel daysTillExpiration = new JLabel("");
+            JLabel quantity = new JLabel("  Quantity: [ " + entry.getQuantity() + " ]");
+            productName.setFont(this.getFont().deriveFont(18F));
+            daysTillExpiration.setFont(this.getFont().deriveFont(18F));
+            quantity.setFont(this.getFont().deriveFont(18F));
 
             if (daysLeft <= 0) {
-                text += "  EXPIRED  ";
+                daysTillExpiration.setText("  EXPIRED  ");
             } else if (daysLeft == 1) {
-                text += "  expires TODAY  ";
+                daysTillExpiration.setText("  Expires TODAY  ");
             } else if (daysLeft <= CalendarPanel.userWarningDays) {
-                text += "  expires in  " + daysLeft + "  days  ";
+                daysTillExpiration.setText("  Expires in  " + daysLeft + "  days  ");
             } else {
-                text += "  expires in  " + daysLeft + "  days  ";
+                daysTillExpiration.setText("  Expires in  " + daysLeft + "  days  ");
             }
 
-            text += "  Quantity: [ " + entry.getQuantity() + " ]";
-
-            // draw label
-            JLabel info = new JLabel(text);
-            row.add(info, BorderLayout.CENTER);
-
-            // set font size for food entries
-            info.setFont(info.getFont().deriveFont(18f));
+            row.add(productName);
+            row.add(Box.createHorizontalGlue()); // Pushes everything else to the right
+            row.add(daysTillExpiration);
+            row.add(quantity);
 
             // draw background color for each row depending on freshness state using reusable method
             row.setBackground(getEntryColor(daysLeft));
