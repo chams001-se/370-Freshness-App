@@ -367,6 +367,13 @@ public class CalendarPanel extends JPanel {
             return;
         }
 
+        // limit quantity to 1 - 99
+        if (quantity < 1 || quantity > 99) {
+            JOptionPane.showMessageDialog(CalendarPanel.this, "Quantity must be between 1 and 99",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         // create FoodEntry and add it
         FoodEntry entry = new FoodEntry(name, quantity, expirationDate);
         ShelfLife shelfLifeFrame = (ShelfLife) SwingUtilities.getWindowAncestor(CalendarPanel.this);
@@ -405,14 +412,19 @@ public class CalendarPanel extends JPanel {
             JCheckBox cb = new JCheckBox();
             checkBoxes.add(cb);
 
+            // checkboxes are now on the left
+            row.add(cb, BorderLayout.WEST);
             row.add(label, BorderLayout.CENTER);
-            row.add(cb, BorderLayout.EAST);
 
             listPanel.add(row);
         }
 
         // scroll pane
         JScrollPane scrollPane = new JScrollPane(listPanel);
+
+        // apply custom scroll bar
+        scrollPane.getVerticalScrollBar().setUI(FoodExpirationPanel.improvedScrollBar());
+
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         scrollPane.setPreferredSize(new Dimension(400, 300));
 

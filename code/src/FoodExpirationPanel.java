@@ -35,7 +35,7 @@ public class FoodExpirationPanel extends JPanel {
 
     }
 
-    public void createHeader(){
+    public void createHeader() {
         this.setLayout(new BorderLayout());
         JPanel header = new JPanel(new BorderLayout());
         JLabel title = new JLabel("Food Expiring");
@@ -104,24 +104,51 @@ public class FoodExpirationPanel extends JPanel {
             row.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
             // draw a boarder around each entry to create space between them
-            row.setBorder(BorderFactory.createMatteBorder(3, 6, 3, 6, new Color(238,238,238)));
+            row.setBorder(BorderFactory.createMatteBorder(3, 5, 3, 5, new Color(238, 238, 238)));
 
             // display name, quantity, & date of entry
             LocalDate exp = entry.getExpirationDate();
             long daysLeft = exp.toEpochDay() - today.toEpochDay();
 
-            // display text
-            JLabel productName = new JLabel(" " + entry.getName() + ":");
+            // -------------display text-------------
+
+            // product entry with automatic truncation when applicable
+            String full = entry.getName();
+            String entryName = full;
+
+            // if food item's name exceeds 12 characters, truncate
+            if (full.length() > 12) {
+                entryName = full.substring(0, 8) + "... ";
+            }
+
+            //display food entry name as normal
+            JLabel productName = new JLabel(" " + entryName + ":");
+            productName.setFont(this.getFont().deriveFont(18F));
+
+            // allow viewing truncated names in full via mouse hover or click
+            if (full.length() > 12) {
+                productName.setToolTipText(full); // hover displays the full name
+
+                // if the item's name is clicked, a new window pop up will display the name in full
+                productName.addMouseListener(new java.awt.event.MouseAdapter() {    //listen for mouse click
+                    public void mouseClicked(java.awt.event.MouseEvent e) { // when the name is clicked, display the popup
+                        JOptionPane.showMessageDialog(productName, full);
+                    }
+                });
+            }
+
             JLabel daysTillExpiration = new JLabel("");
             JLabel quantity = new JLabel("  Quantity: [ " + entry.getQuantity() + " ]");
-            productName.setFont(this.getFont().deriveFont(18F));
-            daysTillExpiration.setFont(this.getFont().deriveFont(18F));
-            quantity.setFont(this.getFont().deriveFont(18F));
+            productName.setFont(this.getFont().deriveFont(20F));
+            //maintain alignment regardless of quantity entered (up to double digits)
+            quantity.setPreferredSize(new Dimension(113, quantity.getPreferredSize().height));
+            daysTillExpiration.setFont(this.getFont().deriveFont(17F));
+            quantity.setFont(this.getFont().deriveFont(16.2F));
 
             if (daysLeft <= 0) {
                 daysTillExpiration.setText("  EXPIRED  ");
             } else if (daysLeft == 1) {
-                daysTillExpiration.setText("  Expires TOMORROW  ");
+                daysTillExpiration.setText("  Expires Tomorrow!  ");
             } else if (daysLeft <= CalendarPanel.userWarningDays) {
                 daysTillExpiration.setText("  Expires in  " + daysLeft + "  days  ");
             } else {
@@ -141,18 +168,34 @@ public class FoodExpirationPanel extends JPanel {
 
         // scroll box functionality for list of food entries
         JScrollPane scrollPane = new JScrollPane(listPanel);
+
+        // disable horizontal scroll bar from appearing
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
         scrollPane.setBorder(null);
         //increase speed of scroll bar
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
-        // improve the look of the default scroll bar
-        scrollPane.getVerticalScrollBar().setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
+        // apply the custom scroll bar design
+        scrollPane.getVerticalScrollBar().setUI(FoodExpirationPanel.improvedScrollBar());
+
+        this.add(scrollPane, BorderLayout.CENTER);
+        this.revalidate();
+        this.repaint();
+
+    }
+
+    // reusable static method for the improved scroll bar
+    // this is so we can reuse it in deleteEntry
+    public static javax.swing.plaf.basic.BasicScrollBarUI improvedScrollBar() {
+        return new javax.swing.plaf.basic.BasicScrollBarUI() {
+
             // change the colors
-            private final Color bar = new Color(190,190,190);
+            private final Color bar = new Color(190, 190, 190);
             private final Color background = new Color(230, 230, 230);
 
             @Override
-            protected void paintThumb(Graphics g, JComponent c, Rectangle r) {
+            protected void paintThumb (Graphics g, JComponent c, Rectangle r){
                 Graphics2D g2 = (Graphics2D) g.create();    // redraw the original bar with a customized bar
                 g2.setColor(bar);
                 g2.fillRoundRect(r.x, r.y, r.width, r.height, 10, 10);  // create rounded edges for the bar
@@ -160,7 +203,7 @@ public class FoodExpirationPanel extends JPanel {
             }
 
             @Override
-            protected void paintTrack(Graphics g, JComponent c, Rectangle r) {
+            protected void paintTrack (Graphics g, JComponent c, Rectangle r){
                 Graphics2D g2 = (Graphics2D) g.create();    // redraw the background of the scroll bar
                 g2.setColor(background);
                 g2.dispose();   // free up the temporary Graphics2D
@@ -168,21 +211,16 @@ public class FoodExpirationPanel extends JPanel {
 
             //  maintain the size of the bar
             @Override
-            protected Dimension getMinimumThumbSize() {
+            protected Dimension getMinimumThumbSize () {
                 return new Dimension(10, 40);
             }
 
             //make the scroll bar thinner
             @Override
-            public Dimension getPreferredSize(JComponent c) {
+            public Dimension getPreferredSize (JComponent c){
                 return new Dimension(15, super.getPreferredSize(c).height);
             }
-        });
-
-        this.add(scrollPane, BorderLayout.CENTER);
-        this.revalidate();
-        this.repaint();
-
+        };
     }
 
     // reusable static method for color coding based on days left

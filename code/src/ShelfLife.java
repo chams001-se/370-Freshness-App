@@ -23,7 +23,7 @@ public class ShelfLife extends JFrame {
         //-----------------------------TEMPORARY TEST ENTRIES----------------------------------------
         entries.add(new FoodEntry("Milk", 1, LocalDate.now().plusDays(2)));
         entries.add(new FoodEntry("Chicken", 2, LocalDate.now().plusDays(7)));
-        entries.add(new FoodEntry("Pizza", 2, LocalDate.now().plusDays(1)));
+        entries.add(new FoodEntry("Very long example name", 99, LocalDate.now().plusDays(1)));
         entries.add(new FoodEntry("Cheese", 1, LocalDate.now().plusDays(1)));
         entries.add(new FoodEntry("Rice", 1, LocalDate.now().plusDays(1)));
         entries.add(new FoodEntry("Oatmeal", 1, LocalDate.now().plusDays(1)));
