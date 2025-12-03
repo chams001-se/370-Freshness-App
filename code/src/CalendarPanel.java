@@ -3,10 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -19,6 +16,12 @@ import java.util.Scanner;
 public class CalendarPanel extends JPanel {
     private JLabel monthLabel;         // label showing current month/year
     private JLabel yearLabel;          // label showing current month/year
+    ImageIcon rightArrow = new ImageIcon(getClass().getResource("/sprites/arrowRightIcon.png"));
+    // Actual image being used, scaled down to stay proper button size
+    Image rightArrowScaled = rightArrow.getImage().getScaledInstance(32, 12, Image.SCALE_SMOOTH);
+    ImageIcon leftArrow = new ImageIcon(getClass().getResource("/sprites/arrowLeftIcon.png"));
+    // Actual image being used, scaled down to stay proper button size
+    Image leftArrowScaled = leftArrow.getImage().getScaledInstance(32, 12, Image.SCALE_SMOOTH);
 
     private JButton nextMonthButton;
     private JButton prevMonthButton;
@@ -138,29 +141,40 @@ public class CalendarPanel extends JPanel {
         // Text parameter is assigned with updateYearLabel()
         yearLabel = new JLabel("YEAR", SwingConstants.CENTER);
         yearLabel.setFont(yearPanel.getFont().deriveFont(Font.BOLD, 18f)); // bold, larger font
+
+        System.out.println(yearLabel.getFont());
         yearLabel.setPreferredSize(new Dimension(140, 30)); // Makes each month take up the same space, preventing UI inconsistency
 
         // Implements interactable buttons to increment through years
-        prevYearButton = new JButton("<<");             // button to go to previous month
-        nextYearButton = new JButton(">>");             // button to go to next month
+        prevYearButton = new JButton("");             // button to go to previous month
+        prevYearButton.setIcon(new ImageIcon(leftArrowScaled));
+
+        nextYearButton = new JButton("");             // button to go to next month
+        nextYearButton.setIcon(new ImageIcon(rightArrowScaled));
+
 
         yearPanel.add(Box.createHorizontalGlue());
         // Pretty bad work around by just eyeballing to center the month panel
         // This is due to having the settings to the right, taking up space in the east side of the bottom panel.
         // TODO if possible, have a mathematical way or logic to make UI even
-        yearPanel.add(Box.createHorizontalStrut(70));
+        yearPanel.add(Box.createHorizontalStrut(50));
         yearPanel.add(prevYearButton);
 
         yearPanel.add(yearLabel);
         yearPanel.add(nextYearButton);
-        yearPanel.add(Box.createHorizontalGlue());
+        yearPanel.add(Box.createHorizontalGlue()); // Makes it so the settings panel will be placed on the right
 
         // Creates the settings components
         JPanel settingsPanel = new JPanel();
         settingsPanel.setLayout(new BoxLayout(settingsPanel, BoxLayout.X_AXIS));
 
-        // Creates the add entry and remove entry buttons.
-        settingsButton = new JButton("SETTINGS");
+        // Settings button is placed in the year panel.
+        settingsButton = new JButton("");
+        ImageIcon settingsIcon = new ImageIcon(getClass().getResource("/sprites/settingsIcon.png"));
+        Image settingsIconScaled = settingsIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+        settingsButton.setIcon(new ImageIcon(settingsIconScaled));
+
+
 
         // Since this is a boxlayout on the X_AXIS, the buttons are placed correctly without any specification needed
         settingsPanel.add(settingsButton);
@@ -186,8 +200,11 @@ public class CalendarPanel extends JPanel {
         monthLabel.setPreferredSize(new Dimension(140, 30)); // Makes each month take up the same space, preventing UI inconsistency
 
         // Creates interactable buttons to increment to months
-        prevMonthButton = new JButton("<<");             // button to go to previous month
-        nextMonthButton = new JButton(">>");             // button to go to next month
+        prevMonthButton = new JButton("");             // button to go to previous month
+        prevMonthButton.setIcon(new ImageIcon(leftArrowScaled));
+
+        nextMonthButton = new JButton("");             // button to go to next month
+        nextMonthButton.setIcon(new ImageIcon(rightArrowScaled));
 
         monthPanel.add(Box.createHorizontalGlue());
         // Pretty bad work around by just eyeballing to center the month panel

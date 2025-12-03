@@ -16,6 +16,9 @@ class SeparatorLine extends JPanel {
 }
 
 public class FoodExpirationPanel extends JPanel {
+
+    Font roboto = new Font("Roboto", Font.BOLD, 20);
+
     FoodExpirationPanel() {
         createHeader();
     }
@@ -36,10 +39,15 @@ public class FoodExpirationPanel extends JPanel {
         this.setLayout(new BorderLayout());
         JPanel header = new JPanel(new BorderLayout());
         JLabel title = new JLabel("Food Expiring");
+        title.setFont(roboto);
         title.setFont(this.getFont().deriveFont(Font.BOLD, 22F));
         header.add(title, BorderLayout.WEST);
 
-        JButton refreshButton = new JButton("Refresh");
+        JButton refreshButton = new JButton("");
+        ImageIcon rawIcon = new ImageIcon(getClass().getResource("/sprites/refreshIcon.png"));
+        Image scaled = rawIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+
+        refreshButton.setIcon(new ImageIcon(scaled));
         header.add(refreshButton, BorderLayout.EAST);
         header.add(new SeparatorLine(), BorderLayout.NORTH);
         header.add(new SeparatorLine(), BorderLayout.SOUTH);
