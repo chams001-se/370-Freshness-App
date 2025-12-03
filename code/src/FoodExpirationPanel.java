@@ -93,7 +93,7 @@ public class FoodExpirationPanel extends JPanel {
             // new row is made for any new entries
             JPanel row = new JPanel();
             row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
-            row.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            row.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
             // draw a boarder around each entry to create space between them
             row.setBorder(BorderFactory.createMatteBorder(3, 6, 3, 6, new Color(238,238,238)));
@@ -134,7 +134,42 @@ public class FoodExpirationPanel extends JPanel {
         // scroll box functionality for list of food entries
         JScrollPane scrollPane = new JScrollPane(listPanel);
         scrollPane.setBorder(null);
+        //increase speed of scroll bar
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+
+        // improve the look of the default scroll bar
+        scrollPane.getVerticalScrollBar().setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
+            // change the colors
+            private final Color bar = new Color(190,190,190);
+            private final Color background = new Color(230, 230, 230);
+
+            @Override
+            protected void paintThumb(Graphics g, JComponent c, Rectangle r) {
+                Graphics2D g2 = (Graphics2D) g.create();    // redraw the original bar with a customized bar
+                g2.setColor(bar);
+                g2.fillRoundRect(r.x, r.y, r.width, r.height, 10, 10);  // create rounded edges for the bar
+                g2.dispose();   // free up the temporary Graphics2D
+            }
+
+            @Override
+            protected void paintTrack(Graphics g, JComponent c, Rectangle r) {
+                Graphics2D g2 = (Graphics2D) g.create();    // redraw the background of the scroll bar
+                g2.setColor(background);
+                g2.dispose();   // free up the temporary Graphics2D
+            }
+
+            //  maintain the size of the bar
+            @Override
+            protected Dimension getMinimumThumbSize() {
+                return new Dimension(10, 40);
+            }
+
+            //make the scroll bar thinner
+            @Override
+            public Dimension getPreferredSize(JComponent c) {
+                return new Dimension(15, super.getPreferredSize(c).height);
+            }
+        });
 
         this.add(scrollPane, BorderLayout.CENTER);
         this.revalidate();

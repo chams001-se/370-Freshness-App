@@ -9,6 +9,11 @@ public class ShelfLife extends JFrame {
     private FoodExpirationPanel fd;
 
     public ShelfLife() {
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");  // updated Swing theme
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         CalendarPanel cal = new CalendarPanel();
         fd = new FoodExpirationPanel(); // assign to field
         createFrame();
