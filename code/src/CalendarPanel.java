@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class CalendarPanel extends JPanel {
-    private static final String USERSETTINGS_FILENAME = "user.settings.txt";
+    private static final String USERSETTINGS_FILENAME = "user_settings.txt";
 
     private JLabel monthLabel;         // label showing current month/year
     private JLabel yearLabel;          // label showing current month/year
@@ -44,7 +44,10 @@ public class CalendarPanel extends JPanel {
     private PanelDate calendar;        // calendar panel (grid of days)
     private YearMonth currentDate;     // tracks the currently displayed month
 
-    CalendarPanel(){
+    private Font fontChoice;
+
+    CalendarPanel(Font fontChoice){
+        this.fontChoice = fontChoice;
         // Load user settings
         userColors = new Color[] {expiredColor, todayColor, warningColor, freshColor};
         loadUserSettings();
@@ -126,10 +129,11 @@ public class CalendarPanel extends JPanel {
             //ex.printStackTrace();
 
             // fallback default settings
+
             userColors[0] = new Color (255, 103, 103);
             userColors[1] = new Color (255, 138, 76);
-            userColors[2] = new Color (255, 226, 2);
-            userColors[3] = new Color (55, 252, 140);
+            userColors[2] = new Color (254, 234, 0);
+            userColors[3] = new Color (45, 216, 129);
             userWarningDays = 3;
 
             // save current settings
@@ -145,7 +149,7 @@ public class CalendarPanel extends JPanel {
 
         // Text parameter is assigned with updateYearLabel()
         yearLabel = new JLabel("YEAR", SwingConstants.CENTER);
-        yearLabel.setFont(yearPanel.getFont().deriveFont(Font.BOLD, 18f)); // bold, larger font
+        yearLabel.setFont(fontChoice.deriveFont(Font.BOLD, 18f)); // bold, larger font
 
         //System.out.println(yearLabel.getFont());
         yearLabel.setPreferredSize(new Dimension(140, 30)); // Makes each month take up the same space, preventing UI inconsistency
@@ -201,7 +205,7 @@ public class CalendarPanel extends JPanel {
 
         // Text parameter is assigned with updateMonthLabel()
         monthLabel = new JLabel("MONTH", SwingConstants.CENTER);
-        monthLabel.setFont(monthLabel.getFont().deriveFont(Font.BOLD, 18f)); // bold, larger font
+        monthLabel.setFont(fontChoice.deriveFont(Font.BOLD, 18f)); // bold, larger font
         monthLabel.setPreferredSize(new Dimension(140, 30)); // Makes each month take up the same space, preventing UI inconsistency
 
         // Creates interactable buttons to increment to months
@@ -244,7 +248,7 @@ public class CalendarPanel extends JPanel {
 
     private void createCalendar(){
         JPanel calendarPanel = new JPanel(new BorderLayout()); // container for calendar grid
-        calendar = new PanelDate(currentDate);                    // create calendar for current month
+        calendar = new PanelDate(currentDate, fontChoice);                    // create calendar for current month
         calendarPanel.add(calendar, BorderLayout.CENTER);      // add calendar to container
 
         calendarPanel.setPreferredSize(new Dimension(this.getWidth(), 300)); // Makes it so the calendar is always 350 pixels tall, preventing inconsistent UI and a larger calendar
@@ -425,7 +429,7 @@ public class CalendarPanel extends JPanel {
             }
 
             JLabel label = new JLabel(text);
-            label.setFont(label.getFont().deriveFont(16f));
+            label.setFont(fontChoice.deriveFont(16f));
 
             // color coding from FoodExpirationPanel
             row.setBackground(FoodExpirationPanel.getEntryColor(daysLeft));

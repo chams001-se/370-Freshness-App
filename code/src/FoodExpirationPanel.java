@@ -1,7 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.io.InputStream;
 
 // Painting raw on the display will result in the painting getting overridden by the layout
 // We must create a panel to host the painting
@@ -16,9 +19,9 @@ class SeparatorLine extends JPanel {
 }
 
 public class FoodExpirationPanel extends JPanel {
-    Font roboto = new Font("Roboto", Font.BOLD, 20);
-
-    FoodExpirationPanel() {
+    Font fontChoice;
+    FoodExpirationPanel(Font fontChoice) {
+        this.fontChoice = fontChoice;
         createHeader();
     }
 
@@ -31,15 +34,14 @@ public class FoodExpirationPanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(5f));
         g2.draw(new Line2D.Double(100, 60, 500, 60));
-
     }
 
     public void createHeader() {
+
         this.setLayout(new BorderLayout());
         JPanel header = new JPanel(new BorderLayout());
         JLabel title = new JLabel("Food Expiring");
-        title.setFont(roboto);
-        title.setFont(this.getFont().deriveFont(Font.BOLD, 22F));
+        title.setFont(fontChoice.deriveFont(Font.BOLD));
         header.add(title, BorderLayout.WEST);
 
         JButton refreshButton = new JButton("");
@@ -136,7 +138,7 @@ public class FoodExpirationPanel extends JPanel {
 
             //display food entry name as normal
             JLabel productName = new JLabel(" " + entryName + ":");
-            productName.setFont(this.getFont().deriveFont(18F));
+            productName.setFont(fontChoice.deriveFont(18F));
 
             // allow viewing truncated names in full via mouse hover or click
             if (full.length() > 12) {
@@ -152,12 +154,12 @@ public class FoodExpirationPanel extends JPanel {
 
             JLabel daysTillExpiration = new JLabel("");
             JLabel quantity = new JLabel("  Quantity: [ " + entry.getQuantity() + " ]");
-            productName.setFont(this.getFont().deriveFont(20F));
+            productName.setFont(fontChoice.deriveFont(20F));
 
             // Maintain alignment regardless of quantity entered (up to double digits)
             quantity.setPreferredSize(new Dimension(113, quantity.getPreferredSize().height));
-            daysTillExpiration.setFont(this.getFont().deriveFont(17F));
-            quantity.setFont(this.getFont().deriveFont(16.2F));
+            daysTillExpiration.setFont(fontChoice.deriveFont(17F));
+            quantity.setFont(fontChoice.deriveFont(16.2F));
 
             if (daysLeft <= 0) {
                 daysTillExpiration.setText("  EXPIRED  ");

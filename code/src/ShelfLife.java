@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -15,15 +12,25 @@ public class ShelfLife extends JFrame {
     // make FoodExpirationPanel a field so it can be accessed by CalendarPanel
     private FoodExpirationPanel fd;
     public final String DATABASE_FILENAME = "food_entries.csv";
-
+    private Font roboto;
     public ShelfLife() {
+        try{
+            InputStream is = getClass().getResourceAsStream("/fonts/Roboto-Medium.ttf");
+            roboto = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(22f);
+
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(roboto);
+        } catch (IOException | FontFormatException e){
+            e.printStackTrace();
+        }
+
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");  // updated Swing theme
         } catch (Exception e) {
             e.printStackTrace();
         }
-        CalendarPanel cal = new CalendarPanel();
-        fd = new FoodExpirationPanel(); // assign to field
+        CalendarPanel cal = new CalendarPanel(roboto);
+        fd = new FoodExpirationPanel(roboto); // assign to field
         createFrame();
         this.add(cal, BorderLayout.NORTH);
         this.add(fd, BorderLayout.CENTER);
@@ -35,7 +42,7 @@ public class ShelfLife extends JFrame {
         }
         else {
             // Use test cases
-            loadTestEntries();
+            //loadTestEntries();
             writeEntries(DATABASE_FILENAME);
             System.out.println("Entries not found, creating " + DATABASE_FILENAME);
         }

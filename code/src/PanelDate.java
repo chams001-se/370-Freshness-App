@@ -17,6 +17,8 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
     JButton previouslySelected = null;
     Color previousSelectedColor = null;
 
+    Font fontChoice;
+
     private ActionListener dateSelector = new ActionListener() {
         @Override
         // Prevents multiple dates being selected.
@@ -30,11 +32,10 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
 
 
     // constructor that initializes the calendar with a given month
-    public PanelDate(YearMonth month) {
+    public PanelDate(YearMonth month, Font fontChoice) {
+        this.fontChoice = fontChoice;
         this.currentMonth = month;       // set current month
         buildCalendar();                 // build the calendar UI
-
-
     }
 
     // method to build or rebuild the calendar grid
@@ -48,7 +49,7 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
         String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         for (String day : days) {
             JLabel label = new JLabel(day, SwingConstants.CENTER); // centered text
-            label.setFont(label.getFont().deriveFont(Font.BOLD));  // bold font
+            label.setFont(fontChoice.deriveFont(Font.BOLD,15f));  // bold font
             this.add(label);                                      // add to panel
         }
 
@@ -72,7 +73,7 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
             if (today.getYear() == currentMonth.getYear()
                     && today.getMonth() == currentMonth.getMonth()
                     && today.getDayOfMonth() == day) {
-                dayButton.setBackground(Color.CYAN); // highlight current day
+                dayButton.setBackground(new Color(255, 95, 95)); // highlight current day
             }
 
             buttonDates.put(dayButton, buttonDate);
@@ -123,7 +124,7 @@ public class PanelDate extends JPanel {   // custom JPanel to display a month ca
             previousSelectedColor = selected.getBackground();
 
             // Sets the color
-            selected.setBackground(Color.PINK);
+            selected.setBackground(new Color(94, 210, 251));
         }
 
         System.out.println(buttonDates.get(selected));
