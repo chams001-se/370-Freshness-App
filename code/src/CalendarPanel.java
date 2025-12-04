@@ -14,6 +14,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class CalendarPanel extends JPanel {
+    private static final String USERSETTINGS_FILENAME = "user.settings.txt";
+
     private JLabel monthLabel;         // label showing current month/year
     private JLabel yearLabel;          // label showing current month/year
     ImageIcon rightArrow = new ImageIcon(getClass().getResource("/sprites/arrowRightIcon.png"));
@@ -108,10 +110,13 @@ public class CalendarPanel extends JPanel {
     // Loads colors and userWarningDays into local variables
     public static void loadUserSettings() {
         try (Scanner scanner = new Scanner(new File("user_settings.txt"))) {
+            int r;
+            int g;
+            int b;
             for (int i = 0; i < userColors.length; i++) {
-                int r = scanner.nextInt();
-                int g = scanner.nextInt();
-                int b = scanner.nextInt();
+                r = scanner.nextInt();
+                g = scanner.nextInt();
+                b = scanner.nextInt();
                 userColors[i] = new Color(r, g, b);
             }
 
@@ -128,7 +133,7 @@ public class CalendarPanel extends JPanel {
             userWarningDays = 3;
 
             // save current settings
-            saveSettings();
+            saveSettings(USERSETTINGS_FILENAME);
         }
     }
 
@@ -142,7 +147,7 @@ public class CalendarPanel extends JPanel {
         yearLabel = new JLabel("YEAR", SwingConstants.CENTER);
         yearLabel.setFont(yearPanel.getFont().deriveFont(Font.BOLD, 18f)); // bold, larger font
 
-        System.out.println(yearLabel.getFont());
+        //System.out.println(yearLabel.getFont());
         yearLabel.setPreferredSize(new Dimension(140, 30)); // Makes each month take up the same space, preventing UI inconsistency
 
         // Implements interactable buttons to increment through years
@@ -376,14 +381,23 @@ public class CalendarPanel extends JPanel {
 
         // create FoodEntry and add it
         FoodEntry entry = new FoodEntry(name, quantity, expirationDate);
+
+        // declare JFrame
         ShelfLife shelfLifeFrame = (ShelfLife) SwingUtilities.getWindowAncestor(CalendarPanel.this);
+
+        // write changes
         shelfLifeFrame.addEntry(entry);
+
+        // refresh dashboard
         shelfLifeFrame.getFoodExpirationPanel().refreshEntries(shelfLifeFrame.getEntries());
     }
 
     private void deleteEntry() {
         ShelfLife shelfLifeFrame = (ShelfLife) SwingUtilities.getWindowAncestor(CalendarPanel.this);
         List<FoodEntry> entries = shelfLifeFrame.getEntries();
+
+        // sort entries
+        shelfLifeFrame.getFoodExpirationPanel().sortEntries(entries);
 
         // main panel
         JPanel listPanel = new JPanel();
@@ -400,8 +414,15 @@ public class CalendarPanel extends JPanel {
             // format text for the entry
             LocalDate today = LocalDate.now();
             long daysLeft = entry.getExpirationDate().toEpochDay() - today.toEpochDay();
-            String text = entry.getName() + " - Qty: " + entry.getQuantity() +
-                    " - Expires in: " + daysLeft + " days";
+            String text;
+            if (daysLeft >= 0) {
+                text = entry.getName() + " - Qty: " + entry.getQuantity() +
+                        " - Expires in: " + daysLeft + " days";
+            }
+            else {
+                text = entry.getName() + " - Qty: " + entry.getQuantity() +
+                        " - Expired";
+            }
 
             JLabel label = new JLabel(text);
             label.setFont(label.getFont().deriveFont(16f));
@@ -448,6 +469,9 @@ public class CalendarPanel extends JPanel {
             }
         }
 
+        // write changes
+        shelfLifeFrame.writeEntries(shelfLifeFrame.DATABASE_FILENAME);
+
         // refresh dashboard
         shelfLifeFrame.getFoodExpirationPanel().refreshEntries(entries);
     }
@@ -469,19 +493,19 @@ public class CalendarPanel extends JPanel {
         });
     }
 
-    private static void saveSettings() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter("user_settings.txt"))) {
+    private static void saveSettings(String filename) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
             // Save expiredColor, todayColor, warningColor, freshColor
-            for (int i = 0; i < userColors.length; i++) {
-                writer.println(userColors[i].getRed());
-                writer.println(userColors[i].getGreen());
-                writer.println(userColors[i].getBlue());
+            for (Color userColor : userColors) {
+                writer.print(userColor.getRed() + " ");
+                writer.print(userColor.getGreen() + " ");
+                writer.println(userColor.getBlue());
             }
 
             // Save warning on less than x days left
             writer.println(userWarningDays);
 
-            System.out.println("Saved current user settings to user_settings.txt!");
+            System.out.println("Saved current user settings to "  + filename + "!");
         }
         catch (IOException ex) {
             ex.printStackTrace();
@@ -560,7 +584,7 @@ public class CalendarPanel extends JPanel {
         }
 
         // save user settings
-        saveSettings();
+        saveSettings(USERSETTINGS_FILENAME);
 
         // refresh dashboard
         ShelfLife shelfLifeFrame = (ShelfLife) SwingUtilities.getWindowAncestor(CalendarPanel.this);

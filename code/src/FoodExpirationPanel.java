@@ -11,12 +11,11 @@ class SeparatorLine extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(2.5f));
-        g2.draw(new Line2D.Double(0, getHeight()/2, getWidth(), getHeight()/2));
+        g2.draw(new Line2D.Double(0, (double) getHeight() /2, getWidth(), (double) getHeight() /2));
     }
 }
 
 public class FoodExpirationPanel extends JPanel {
-
     Font roboto = new Font("Roboto", Font.BOLD, 20);
 
     FoodExpirationPanel() {
@@ -46,8 +45,15 @@ public class FoodExpirationPanel extends JPanel {
         JButton refreshButton = new JButton("");
         ImageIcon rawIcon = new ImageIcon(getClass().getResource("/sprites/refreshIcon.png"));
         Image scaled = rawIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-
         refreshButton.setIcon(new ImageIcon(scaled));
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                ShelfLife shelfLifeFrame = (ShelfLife) SwingUtilities.getWindowAncestor(FoodExpirationPanel.this);
+                refreshEntries(shelfLifeFrame.getEntries());                   // call method to handle next month
+                System.out.println("Food Expiration Panel has been refreshed!");
+            }
+        });
+
         header.add(refreshButton, BorderLayout.EAST);
         header.add(new SeparatorLine(), BorderLayout.NORTH);
         header.add(new SeparatorLine(), BorderLayout.SOUTH);
@@ -55,10 +61,30 @@ public class FoodExpirationPanel extends JPanel {
 
     }
 
+    public void sortEntries(java.util.List<FoodEntry> entries) {
+        // sort by expiration date via selection sort
+        int earliestEntry;
+        for (int i = 0; i < entries.size() - 1; i++) {
+            earliestEntry = i;
+
+            for (int j = i + 1; j < entries.size(); j++) {
+                if (entries.get(j).getExpirationDate().isBefore(entries.get(earliestEntry).getExpirationDate())) {
+                    earliestEntry = j;
+                }
+            }
+            if (earliestEntry != i) {
+                FoodEntry temp = entries.get(i);
+                entries.set(i, entries.get(earliestEntry));
+                entries.set(earliestEntry, temp);
+            }
+        }
+    }
+
     public void refreshEntries(java.util.List<FoodEntry> entries) {
         this.removeAll();   // clean out UI
         this.setLayout(new BorderLayout());
         createHeader();
+
         // reload user settings
         CalendarPanel.loadUserSettings();
 
@@ -72,32 +98,19 @@ public class FoodExpirationPanel extends JPanel {
 
         for (FoodEntry e : entries) {
             long days = java.time.temporal.ChronoUnit.DAYS.between(compareToday, e.getExpirationDate());
-            if (days >= 0 && days <= 30) {
+            if (days <= 30) {
                 filtered.add(e);
             }
         }
 
-        entries = filtered;
+        //entries = filtered;
 
-        // sort by expiration date via selection sort
-        for (int i = 0; i < entries.size() - 1; i++) {
-            int earliestEntry = i;
-
-            for (int j = i + 1; j < entries.size(); j++) {
-                if (entries.get(j).getExpirationDate().isBefore(entries.get(earliestEntry).getExpirationDate())) {
-                    earliestEntry = j;
-                }
-            }
-            if (earliestEntry != i) {
-                FoodEntry temp = entries.get(i);
-                entries.set(i, entries.get(earliestEntry));
-                entries.set(earliestEntry, temp);
-            }
-        }
+        //sortEntries(entries);
+        sortEntries(filtered);
 
         LocalDate today = LocalDate.now();
 
-        for (FoodEntry entry : entries) {
+        for (FoodEntry entry : filtered) {
             // new row is made for any new entries
             JPanel row = new JPanel();
             row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
@@ -140,7 +153,8 @@ public class FoodExpirationPanel extends JPanel {
             JLabel daysTillExpiration = new JLabel("");
             JLabel quantity = new JLabel("  Quantity: [ " + entry.getQuantity() + " ]");
             productName.setFont(this.getFont().deriveFont(20F));
-            //maintain alignment regardless of quantity entered (up to double digits)
+
+            // Maintain alignment regardless of quantity entered (up to double digits)
             quantity.setPreferredSize(new Dimension(113, quantity.getPreferredSize().height));
             daysTillExpiration.setFont(this.getFont().deriveFont(17F));
             quantity.setFont(this.getFont().deriveFont(16.2F));
