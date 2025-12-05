@@ -42,7 +42,7 @@ public class ShelfLife extends JFrame {
         }
         else {
             // Use test cases
-            //loadTestEntries();
+            loadTestEntries();
             writeEntries(DATABASE_FILENAME);
             System.out.println("Entries not found, creating " + DATABASE_FILENAME);
         }

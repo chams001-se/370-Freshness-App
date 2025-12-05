@@ -163,9 +163,7 @@ public class CalendarPanel extends JPanel {
 
 
         yearPanel.add(Box.createHorizontalGlue());
-        // Pretty bad work around by just eyeballing to center the month panel
-        // This is due to having the settings to the right, taking up space in the east side of the bottom panel.
-        // TODO if possible, have a mathematical way or logic to make UI even
+
         yearPanel.add(Box.createHorizontalStrut(50));
         yearPanel.add(prevYearButton);
 
