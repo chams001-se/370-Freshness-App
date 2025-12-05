@@ -1,10 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
-import java.io.InputStream;
 
 // Painting raw on the display will result in the painting getting overridden by the layout
 // We must create a panel to host the painting
@@ -171,6 +168,7 @@ public class FoodExpirationPanel extends JPanel {
                 daysTillExpiration.setText("  Expires in  " + daysLeft + "  days  ");
             }
 
+
             row.add(productName);
             row.add(Box.createHorizontalGlue()); // Pushes everything else to the right
             row.add(daysTillExpiration);
@@ -179,7 +177,32 @@ public class FoodExpirationPanel extends JPanel {
             // draw background color for each row depending on freshness state using reusable method
             row.setBackground(getEntryColor(daysLeft));
 
-            listPanel.add(row);
+            JLayeredPane foodEntryDisplay = new JLayeredPane();
+            foodEntryDisplay.setLayout(new OverlayLayout(foodEntryDisplay));
+
+
+            JButton selectEntry = new JButton();
+
+            // Makes the button start at where the row starts
+            selectEntry.setAlignmentX(row.getAlignmentX());
+            selectEntry.setAlignmentY(row.getAlignmentY());
+
+            // Really weird workaround for making the button stretch to the row size
+            selectEntry.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE)); // basically makes the button as big as possible
+            selectEntry.setContentAreaFilled(false); // Makes the button invisible
+
+            // When the user presses the food entry they are really just pressing the invisible button overlaying it.
+            selectEntry.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    // TODO edit logic
+                    System.out.println("Hey");
+                }
+            });
+
+            foodEntryDisplay.add(row);
+            foodEntryDisplay.add(selectEntry);
+
+            listPanel.add(foodEntryDisplay);
         }
 
         // scroll box functionality for list of food entries
