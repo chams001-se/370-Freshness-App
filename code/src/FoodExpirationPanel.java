@@ -201,7 +201,7 @@ public class FoodExpirationPanel extends JPanel {
                     // create panel to hold text fields for name, quantity and expiration date
                     JPanel inputPanel = new JPanel(new GridLayout(3, 2, 5, 5));
 
-                    // populate fields with existing entry data
+                    // fill in the fields with existing entry data
                     JTextField nameField = new JTextField(entry.getName());
                     JTextField quantityField = new JTextField(String.valueOf(entry.getQuantity()));
                     JTextField dateField = new JTextField(entry.getExpirationDate().toString());
@@ -236,6 +236,25 @@ public class FoodExpirationPanel extends JPanel {
                         String qtyStr = quantityField.getText().trim();     // before and after the string
                         String dateStr = dateField.getText().trim();        // so that we don't run into the issue of
                                                                             // whitespace being considered as new text (for formatting purposes)
+
+                        boolean invalidName = false;
+                        for (char character : newName.toCharArray()) {
+                            if (!Character.isLetterOrDigit(character) && character != ' ') {
+                                JOptionPane.showMessageDialog(
+                                        FoodExpirationPanel.this,
+                                        "Food name can only contain letters or numbers!",
+                                        "Invalid Name",
+                                        JOptionPane.ERROR_MESSAGE
+                                );
+                                invalidName = true;
+                                break;
+                            }
+                        }
+
+                        if (invalidName) {
+                            continue; // show edit window again without closing
+                        }
+
                         int newQuantity;
                         try {
                             newQuantity = Integer.parseInt(qtyStr);

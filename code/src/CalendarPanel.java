@@ -361,6 +361,19 @@ public class CalendarPanel extends JPanel {
         String name = nameField.getText();
         String qtyStr = quantityField.getText();
 
+        // allow only letters, numbers, and spaces
+        for (char character : name.toCharArray()) {
+            if (!Character.isLetterOrDigit(character) && character != ' ') {
+                JOptionPane.showMessageDialog(
+                        CalendarPanel.this,
+                        "Food name can only contain letters or numbers!",
+                        "Invalid Name",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return; // stop further execution if invalid
+            }
+        }
+
         if (name.isEmpty() || qtyStr.isEmpty()) {
             return; // fields cannot be empty
         }
