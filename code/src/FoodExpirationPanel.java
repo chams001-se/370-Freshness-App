@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 // Painting raw on the display will result in the painting getting overridden by the layout
 // We must create a panel to host the painting
@@ -194,8 +195,86 @@ public class FoodExpirationPanel extends JPanel {
             // When the user presses the food entry they are really just pressing the invisible button overlaying it.
             selectEntry.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent e) {
-                    // TODO edit logic
-                    System.out.println("Hey");
+                    // get the current ShelfLife frame
+                    ShelfLife shelfLifeFrame = (ShelfLife) SwingUtilities.getWindowAncestor(FoodExpirationPanel.this);
+
+                    // create panel to hold text fields for name, quantity and expiration date
+                    JPanel inputPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+
+                    // populate fields with existing entry data
+                    JTextField nameField = new JTextField(entry.getName());
+                    JTextField quantityField = new JTextField(String.valueOf(entry.getQuantity()));
+                    JTextField dateField = new JTextField(entry.getExpirationDate().toString());
+
+                    // add labels and fields to the panel
+                    inputPanel.add(new JLabel("Food Name:"));
+                    inputPanel.add(nameField);
+                    inputPanel.add(new JLabel("Quantity:"));
+                    inputPanel.add(quantityField);
+                    inputPanel.add(new JLabel("Expiration Date (YYYY-MM-DD):"));
+                    inputPanel.add(dateField);
+
+                    // format expiration date for the window title
+                    String formattedDate = entry.getExpirationDate().format(DateTimeFormatter.ofPattern("MMMM d, yyyy"));
+
+                    boolean validInputEntry = false;
+                    while (!validInputEntry) {
+                        // show confirm dialog
+                        int result = JOptionPane.showConfirmDialog(
+                                FoodExpirationPanel.this,
+                                inputPanel,
+                                "Editing " + entry.getName() + " for " + formattedDate,
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.PLAIN_MESSAGE
+                        );
+
+                        if (result != JOptionPane.OK_OPTION) {
+                            return; // user cancelled
+                        }
+
+                        String newName = nameField.getText().trim();        // trim gets rid of extra whitespace
+                        String qtyStr = quantityField.getText().trim();     // before and after the string
+                        String dateStr = dateField.getText().trim();        // so that we don't run into the issue of
+                                                                            // whitespace being considered as new text (for formatting purposes)
+                        int newQuantity;
+                        try {
+                            newQuantity = Integer.parseInt(qtyStr);
+                            if (newQuantity < 1 || newQuantity > 99) {
+                                JOptionPane.showMessageDialog(FoodExpirationPanel.this, "Quantity must be between 1 and 99.");
+                                continue; // show edit window again
+                            }
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(FoodExpirationPanel.this, "Invalid quantity! Enter a number between 1 and 99.");
+                            continue; // show edit window again
+                        }
+
+                        LocalDate newDate;
+                        try {
+                            newDate = LocalDate.parse(dateStr); // in YYYY-MM-DD format
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(FoodExpirationPanel.this, "Invalid date! Use YYYY-MM-DD format.");
+                            continue; // show edit window again
+                        }
+                        // the reason we go with the YYYY-MM-DD format for editing is due to how
+                        // java's LocalDate.parse uses this format. without this, we would have to account
+                        // for an indefinite amount of string possibilities if we wanted to keep our
+                        // "MM DD YYYY" format like we have in the title of add entry. Using the LocalDate.parse
+                        // makes it easier for us to translate the changes over. If we did it the other way,
+                        // we'd have to account for lazy inputs like "dec 12 2025", "dec-12-25", "december 12 2025"
+                        // and so on
+
+                        // passed the error checking meaning inputs are valid
+                        // therefore we update the entry
+                        entry.setName(newName);
+                        entry.setQuantity(newQuantity);
+                        entry.setExpirationDate(newDate);
+
+                        // save changes to our CSV file and refresh dashboard
+                        shelfLifeFrame.writeEntries(shelfLifeFrame.DATABASE_FILENAME);
+                        refreshEntries(shelfLifeFrame.getEntries());
+
+                        validInputEntry = true; // exit loop
+                    }
                 }
             });
 

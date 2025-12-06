@@ -192,7 +192,7 @@ public class CalendarPanel extends JPanel {
         topPanel.add(yearPanel, BorderLayout.CENTER);
         topPanel.add(settingsPanel, BorderLayout.EAST);
 
-        // Finally, add this to the calendarScreen, which is added onto the frame.
+        // add this to the calendar screen which is added onto the frame
         this.add(topPanel, BorderLayout.NORTH);
     }
 
