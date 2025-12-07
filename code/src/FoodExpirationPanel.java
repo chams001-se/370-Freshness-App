@@ -151,7 +151,7 @@ public class FoodExpirationPanel extends JPanel {
             }
 
             JLabel daysTillExpiration = new JLabel("");
-            JLabel quantity = new JLabel("  Quantity: [ " + entry.getQuantity() + " ]");
+            JLabel quantity = new JLabel("  Quantity: [" + entry.getQuantity() + "]");
             productName.setFont(fontChoice.deriveFont(20F));
 
             // Maintain alignment regardless of quantity entered (up to double digits)

@@ -421,26 +421,56 @@ public class CalendarPanel extends JPanel {
         // list to hold checkboxes
         List<JCheckBox> checkBoxes = new ArrayList<>();
 
-        // create checkbox for each entry
+        // create row for each entry
         for (FoodEntry entry : entries) {
-            JPanel row = new JPanel(new BorderLayout());
+            JPanel row = new JPanel();
+            row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
             row.setBorder(BorderFactory.createMatteBorder(2, 5, 2, 5, new Color(238, 238, 238)));
 
             // format text for the entry
             LocalDate today = LocalDate.now();
             long daysLeft = entry.getExpirationDate().toEpochDay() - today.toEpochDay();
-            String text;
-            if (daysLeft >= 0) {
-                text = entry.getName() + " - Qty: " + entry.getQuantity() +
-                        " - Expires in: " + daysLeft + " days";
-            }
-            else {
-                text = entry.getName() + " - Qty: " + entry.getQuantity() +
-                        " - Expired";
+
+            //display name with truncation if applicable like in FoodExpirationPanel
+            String full = entry.getName();
+            String entryName = full;
+
+            if (full.length() > 12){
+                entryName = full.substring(0, 8) + "... ";
             }
 
-            JLabel label = new JLabel(text);
-            label.setFont(fontChoice.deriveFont(16f));
+            JLabel productName = new JLabel(" " + entryName + ":");
+            productName.setFont(fontChoice.deriveFont(17F));
+
+            //incorporate mouse hover to display full name like in FoodExpirationPanel
+            if (full.length() > 12) {
+                productName.setToolTipText(full);
+
+                productName.addMouseListener(new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent e) {
+                        JOptionPane.showMessageDialog(productName, full);
+                    }
+                });
+            }
+
+            //quantity has its own label for consistent spacing
+            JLabel quantity = new JLabel(" Quantity: [" + entry.getQuantity() + "]");
+            quantity.setFont(fontChoice.deriveFont(16F));
+            quantity.setPreferredSize(new Dimension(110, quantity.getPreferredSize().height));
+
+            //expiration now has its own label
+            JLabel freshnessState = new JLabel("");
+            freshnessState.setFont(fontChoice.deriveFont(16F));
+
+            if (daysLeft <= 0){
+                freshnessState.setText("  Expired  ");
+            }
+            else if (daysLeft == 1) {
+                freshnessState.setText("  Expires Tomorrow!  ");
+            }
+            else {
+                freshnessState.setText("  Expires in " + daysLeft + " days  ");
+            }
 
             // color coding from FoodExpirationPanel
             row.setBackground(FoodExpirationPanel.getEntryColor(daysLeft));
@@ -448,15 +478,21 @@ public class CalendarPanel extends JPanel {
             JCheckBox cb = new JCheckBox();
             checkBoxes.add(cb);
 
-            // checkboxes are now on the left
-            row.add(cb, BorderLayout.WEST);
-            row.add(label, BorderLayout.CENTER);
+            row.add(cb, BorderLayout.WEST);     // checkboxes are now on the left
+
+            row.add(productName);
+            row.add(Box.createHorizontalGlue());    //push everything else to the right
+            row.add(freshnessState);
+            row.add(quantity);
 
             listPanel.add(row);
         }
 
         // scroll pane
         JScrollPane scrollPane = new JScrollPane(listPanel);
+
+        // disable horizontal scroll bar from appearing like in FoodExpirationPanel
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         // apply custom scroll bar
         scrollPane.getVerticalScrollBar().setUI(FoodExpirationPanel.improvedScrollBar());
